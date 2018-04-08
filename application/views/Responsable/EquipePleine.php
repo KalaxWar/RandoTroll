@@ -1,0 +1,1 @@
+<h4 align='center'><span class='TextBlanc'>Equipe complète. Impossible de rajouter un membre SAUF avec une au près de l'administrateur (contact admin)</span></h4>
