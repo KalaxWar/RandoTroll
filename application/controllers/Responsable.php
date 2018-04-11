@@ -20,7 +20,6 @@ class Responsable extends CI_Controller {
      $UnUtilisateur['LesUtilisateur'] = $this->ModeleUtilisateur->GetMembreEquipe($Utilisateur = array('noequipe' => $this->session->numeroEquipe, 'annee'=> date('Y')));
      $NombreDInscrit = count($UnUtilisateur['LesUtilisateur']);
      $UnUtilisateur['Responsable'] = $this->ModeleUtilisateur->GetConnexionVisiteur($Participant = array('noparticipant' => $this->session->numero));
-     $UnUtilisateur['LesUtilisateur'] = $this->ModeleUtilisateur->GetMembreEquipe($Utilisateur = array('noequipe' => $this->session->numeroEquipe, 'annee'=> date('Y')));
      $UnUtilisateur['LesParcours'] = $this->ModeleUtilisateur->GetParcours();
      $UnUtilisateur['ParcoursChoisis'] = $this->ModeleUtilisateur->GetChoisir($arrayName = array('noequipe' =>$this->session->numeroEquipe));
      $UnUtilisateur['NombreDInscrit'] = $NombreDInscrit;
@@ -36,7 +35,10 @@ class Responsable extends CI_Controller {
         $LesMembresEquipes = $this->ModeleUtilisateur->GetMembreEquipe($arrayName);
         $UnUtilisateur['Responsable'] = $this->ModeleUtilisateur->GetConnexionVisiteur($Participant = array('noparticipant' => $this->session->numero));
         $UnUtilisateur['LesUtilisateur'] = $this->ModeleUtilisateur->GetMembreEquipe($Utilisateur = array('noequipe' => $this->session->numeroEquipe, 'annee'=> date('Y')));
+        $NombreDInscrit = count($UnUtilisateur['LesUtilisateur']);
+        $UnUtilisateur['NombreDInscrit'] = $NombreDInscrit;
         $UnUtilisateur['LesParcours'] = $this->ModeleUtilisateur->GetParcours();
+        $UnUtilisateur['ParcoursChoisis'] = $this->ModeleUtilisateur->GetChoisir($arrayName = array('noequipe' =>$this->session->numeroEquipe));
         $this->load->view('Responsable/Accueil',$UnUtilisateur);
         foreach ($LesMembresEquipes as $UnMembreEquipe) 
         {
@@ -49,7 +51,7 @@ class Responsable extends CI_Controller {
               if ((!$LeParticipantAModif == null))
               {
                 $this->load->view('Responsable/AjouterRandonneur',$LeParticipantAModif[0]);
-                $this->load->view('Responsable/InscriptionEquipe');
+                $this->load->view('Responsable/InscriptionEquipe',$UnUtilisateur);
               }
             }
             else

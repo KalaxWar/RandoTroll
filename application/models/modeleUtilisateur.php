@@ -128,4 +128,8 @@ class ModeleUtilisateur extends CI_Model {
     $requete = $this->db->get('choisir');
     return $requete->row_array();
   }
+  public function AddSinscrire($Value)
+  {
+    $this->db->insert('sinscrire', $Value);
+  }
 }
