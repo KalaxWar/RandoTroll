@@ -107,4 +107,25 @@ class ModeleUtilisateur extends CI_Model {
     $this->db->where('NOPARTICIPANT', $Value);
     $this->db->delete($tables);
   }
+  public function GetParcours()
+  {
+    $requete = $this->db->get('parcours');
+    return $requete->result_array();
+  }
+  public function GetAnnee($Value)
+  {
+    $this->db->where('ANNEE', $Value['annee']);
+    $requete = $this->db->get('annee');
+    return $requete->row_array();
+  }
+  public function AddChoisir($Value)
+  {
+    $this->db->insert('choisir', $Value);
+  }
+  public function GetChoisir($Value)
+  {
+    $this->db->where('NOEQUIPE', $Value['noequipe']);
+    $requete = $this->db->get('choisir');
+    return $requete->row_array();
+  }
 }

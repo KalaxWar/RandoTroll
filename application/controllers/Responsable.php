@@ -11,24 +11,22 @@ class Responsable extends CI_Controller {
        
      }
      $this->load->view('Template/EnTete');
-     $this->load->view('Responsable/DonneeFixe');
+     //$this->load->view('Responsable/DonneeFixe');
     }
     public function index()
     {
-     //si l'équipe est pleine > 9
+     $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
+     $this->session->AnneeEnCours = $AnneeEnCours;
      $UnUtilisateur['LesUtilisateur'] = $this->ModeleUtilisateur->GetMembreEquipe($Utilisateur = array('noequipe' => $this->session->numeroEquipe, 'annee'=> date('Y')));
      $NombreDInscrit = count($UnUtilisateur['LesUtilisateur']);
-     if($NombreDInscrit > 9)
-     {
-      $this->load->view('Responsable/EquipePleine');
-     }
      $UnUtilisateur['Responsable'] = $this->ModeleUtilisateur->GetConnexionVisiteur($Participant = array('noparticipant' => $this->session->numero));
      $UnUtilisateur['LesUtilisateur'] = $this->ModeleUtilisateur->GetMembreEquipe($Utilisateur = array('noequipe' => $this->session->numeroEquipe, 'annee'=> date('Y')));
-     $this->load->view('Responsable/Accueil',$UnUtilisateur);
-     if($NombreDInscrit <= 9)
-     {
-      $this->load->view('Responsable/AjouterRandonneur');
-     }
+     $UnUtilisateur['LesParcours'] = $this->ModeleUtilisateur->GetParcours();
+     $UnUtilisateur['ParcoursChoisis'] = $this->ModeleUtilisateur->GetChoisir($arrayName = array('noequipe' =>$this->session->numeroEquipe));
+     $UnUtilisateur['NombreDInscrit'] = $NombreDInscrit;
+    $this->load->view('Responsable/Accueil',$UnUtilisateur);
+    $this->load->view('Responsable/AjouterRandonneur');
+    $this->load->view('Responsable/InscriptionEquipe',$UnUtilisateur);
     }
     public function modifierRandonneur($numero = null)
     {
@@ -38,6 +36,7 @@ class Responsable extends CI_Controller {
         $LesMembresEquipes = $this->ModeleUtilisateur->GetMembreEquipe($arrayName);
         $UnUtilisateur['Responsable'] = $this->ModeleUtilisateur->GetConnexionVisiteur($Participant = array('noparticipant' => $this->session->numero));
         $UnUtilisateur['LesUtilisateur'] = $this->ModeleUtilisateur->GetMembreEquipe($Utilisateur = array('noequipe' => $this->session->numeroEquipe, 'annee'=> date('Y')));
+        $UnUtilisateur['LesParcours'] = $this->ModeleUtilisateur->GetParcours();
         $this->load->view('Responsable/Accueil',$UnUtilisateur);
         foreach ($LesMembresEquipes as $UnMembreEquipe) 
         {
@@ -50,6 +49,7 @@ class Responsable extends CI_Controller {
               if ((!$LeParticipantAModif == null))
               {
                 $this->load->view('Responsable/AjouterRandonneur',$LeParticipantAModif[0]);
+                $this->load->view('Responsable/InscriptionEquipe');
               }
             }
             else
@@ -109,11 +109,6 @@ class Responsable extends CI_Controller {
 
     public function AjouterRandoneur()
     {
-      $UnUtilisateur['LesUtilisateur'] = $this->ModeleUtilisateur->GetMembreEquipe($Utilisateur = array('noequipe' => $this->session->numeroEquipe, 'annee'=> date('Y')));
-      $NombreDInscrit = count($UnUtilisateur['LesUtilisateur']);
-      if($NombreDInscrit <= 9)
-      {
-      
       $var = $this->input->post('txtDate');
       $date = str_replace('/', '-', $var);
       $date = date('Y-m-d', strtotime($date));
@@ -142,13 +137,7 @@ class Responsable extends CI_Controller {
           'REPASSURPLACE' => $this->input->post('repas')
       );
       $this->ModeleUtilisateur->AddMembreDe($membreDe); // ajout du responsable dans MembreDe dans la BDD
-      redirect('Responsable');
-    }
-    else
-    {
-      $Value['Value'] = 'Impossible L\'équipe est au complète.';
-      $this->load->view('BoiteAlerte',$Value);
-    }
+      redirect('Responsable','refresh');
     }
 
     public function SupprimerParticipant($numero)
@@ -173,5 +162,19 @@ class Responsable extends CI_Controller {
     public function MonCompte()
     {
       $this->load->view('Responsable/Compte');
+    }
+    public function inscriptionEquipe()
+    {
+      $ResultChoisir = $this->ModeleUtilisateur->GetChoisir($arrayName = array('noequipe' =>$this->session->numeroEquipe));
+      if (!(isset($ResultChoisir)))
+      {
+        $Choisir = array(
+          'NOEQUIPE' =>$this->session->numeroEquipe, 
+          'ANNEE' => date('Y'),
+          'NOPARCOURS' => $this->input->post('Parcours')
+        );
+        $this->ModeleUtilisateur->AddChoisir($Choisir);
+        redirect('Responsable');
+      }
     }
 }

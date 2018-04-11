@@ -1,3 +1,7 @@
+</div>
+<div class='col-sm-3' >
+    <section>
+    <div class="section-inner" style="background-color:#FDBA23;padding:20px;">
 <?php if (isset($NOM)) 
 {
     echo "<h4 align='center'><span class='textBlanc'>Modifier un randonneur</span></h4>";
@@ -38,6 +42,7 @@ else
     </div>
     <div class="form-group">
         <label for="txtDate"><span class='textBlanc'>Date de naissance : *</span></label>
+        
         <input type="text" name='txtDate' id="datepicker" placeholder='16/09/1999' class='form-control' title =" EX : 16/09/1999" required pattern='^([0]?[1-9]|[1|2][0-9]|[3][0|1])[./-]([0]?[1-9]|[1][0-2])[./-]([0-9]{4}|[0-9]{2})$' <?php if (isset($date)) {echo 'value = '.$date;}?>>
     </div>
     <br><br>
@@ -71,4 +76,5 @@ else {
 }
 ?>
   </form>
-</div></div>
+  </div>
+  </section><br>

@@ -4,7 +4,7 @@
   }
   </style>
   <div class="container">
-  <nav class="navbar navbar-inverse">
+  <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" <?php echo "href='".site_url('Responsable')."'" ?>>RandoTroll</a>
@@ -18,4 +18,3 @@
     </ul>
   </div>
 </nav>
-  <div class='col-sm-12' style="background-color:#FDBA23;">
