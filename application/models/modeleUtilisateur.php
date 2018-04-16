@@ -124,12 +124,37 @@ class ModeleUtilisateur extends CI_Model {
   }
   public function GetChoisir($Value)
   {
-    $this->db->where('NOEQUIPE', $Value['noequipe']);
+    $this->db->where('NOEQUIPE', $Value['NOEQUIPE']);
+    $this->db->where('ANNEE', $Value['ANNEE']);
     $requete = $this->db->get('choisir');
     return $requete->row_array();
   }
   public function AddSinscrire($Value)
   {
     $this->db->insert('sinscrire', $Value);
+  }
+  public function UpdateChoisir($Value)
+  {
+    $this->db->where('NOEQUIPE', $Value['NOEQUIPE']);
+    $this->db->where('ANNEE', $Value['ANNEE']);
+    $this->db->update('choisir', $Value);
+  }
+  public function GetAdulteEquipe($Value)
+  {
+    $this->db->select('*');
+    $this->db->join('membrede', 'membrede.NOPARTICIPANT = participant.NOPARTICIPANT');
+    $this->db->where('NOEQUIPE', $Value['NOEQUIPE']);
+    $this->db->where('DATEDENAISSANCE <', $Value['DATE']);
+    $requete = $this->db->get('participant');
+    return $requete->result_array();
+  }
+  public function GetEnfantEquipe($Value)
+  {
+    $this->db->select('*');
+    $this->db->join('membrede', 'membrede.NOPARTICIPANT = participant.NOPARTICIPANT');
+    $this->db->where('NOEQUIPE', $Value['NOEQUIPE']);
+    $this->db->where('DATEDENAISSANCE >', $Value['DATE']);
+    $requete = $this->db->get('participant');
+    return $requete->result_array();
   }
 }

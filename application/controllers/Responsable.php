@@ -11,17 +11,42 @@ class Responsable extends CI_Controller {
        
      }
      $this->load->view('Template/EnTete');
-     //$this->load->view('Responsable/DonneeFixe');
+     $this->load->view('Responsable/DonneeFixe');
     }
     public function index()
     {
      $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
-     $this->session->AnneeEnCours = $AnneeEnCours;
+     $this->session->AnneeEnCours = $AnneeEnCours; //je fait les 2 cathégories d'age (date de la course - la limite d'age)
+     $date= $AnneeEnCours['DATECOURSE'];
+     $an=substr($date,0,4); 
+     $mois=substr($date,5,2); 
+     $jour=substr($date,8,2);
+     $an = $an - $AnneeEnCours['LIMITEAGE'];
+     $Adultes = $this->ModeleUtilisateur->GetAdulteEquipe($Utilisateur = array('NOEQUIPE' => $this->session->numeroEquipe, 'DATE'=> $an.'/'.$mois.'/'.$jour));
+     $UnUtilisateur['NBAdultesInscri'] = count($Adultes);
+     $NBrepasAdulte = 0;
+     foreach ($Adultes as $UnAdulte) {
+       if ($UnAdulte['REPASSURPLACE']==1)
+       {
+         $NBrepasAdulte++;
+       }
+     }
+     $UnUtilisateur['NBrepasAdulte'] = $NBrepasAdulte;
+     $Enfant = $this->ModeleUtilisateur->GetEnfantEquipe($Utilisateur = array('NOEQUIPE' => $this->session->numeroEquipe, 'DATE'=> $an.'/'.$mois.'/'.$jour));
+     $UnUtilisateur['NBEnfantsInscri'] = count($Enfant);
+     $NBrepasEnfant = 0;
+     foreach ($Enfant as $UnEnfant) {
+       if ($UnEnfant['REPASSURPLACE']==1)
+       {
+         $NBrepasEnfant++;
+       }
+     }
+     $UnUtilisateur['NBrepasEnfant'] = $NBrepasEnfant;
      $UnUtilisateur['LesUtilisateur'] = $this->ModeleUtilisateur->GetMembreEquipe($Utilisateur = array('noequipe' => $this->session->numeroEquipe, 'annee'=> date('Y')));
      $NombreDInscrit = count($UnUtilisateur['LesUtilisateur']);
      $UnUtilisateur['Responsable'] = $this->ModeleUtilisateur->GetConnexionVisiteur($Participant = array('noparticipant' => $this->session->numero));
      $UnUtilisateur['LesParcours'] = $this->ModeleUtilisateur->GetParcours();
-     $UnUtilisateur['ParcoursChoisis'] = $this->ModeleUtilisateur->GetChoisir($arrayName = array('noequipe' =>$this->session->numeroEquipe));
+     $UnUtilisateur['ParcoursChoisis'] = $this->ModeleUtilisateur->GetChoisir($arrayName = array('NOEQUIPE' =>$this->session->numeroEquipe,'ANNEE' => date('Y')));
      $UnUtilisateur['NombreDInscrit'] = $NombreDInscrit;
     $this->load->view('Responsable/Accueil',$UnUtilisateur);
     $this->load->view('Responsable/AjouterRandonneur');
@@ -31,6 +56,33 @@ class Responsable extends CI_Controller {
     {
       if (!($numero == null))
       {
+        $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
+        $this->session->AnneeEnCours = $AnneeEnCours; //je fait les 2 cathégories d'age (date de la course - la limite d'age)
+        $date= $AnneeEnCours['DATECOURSE'];
+        $an=substr($date,0,4); 
+        $mois=substr($date,5,2); 
+        $jour=substr($date,8,2);
+        $an = $an - $AnneeEnCours['LIMITEAGE'];
+        $Adultes = $this->ModeleUtilisateur->GetAdulteEquipe($Utilisateur = array('NOEQUIPE' => $this->session->numeroEquipe, 'DATE'=> $an.'/'.$mois.'/'.$jour));
+        $UnUtilisateur['NBAdultesInscri'] = count($Adultes);
+        $NBrepasAdulte = 0;
+        foreach ($Adultes as $UnAdulte) {
+          if ($UnAdulte['REPASSURPLACE']==1)
+          {
+            $NBrepasAdulte++;
+          }
+        }
+        $UnUtilisateur['NBrepasAdulte'] = $NBrepasAdulte;
+        $Enfant = $this->ModeleUtilisateur->GetEnfantEquipe($Utilisateur = array('NOEQUIPE' => $this->session->numeroEquipe, 'DATE'=> $an.'/'.$mois.'/'.$jour));
+        $UnUtilisateur['NBEnfantsInscri'] = count($Enfant);
+        $NBrepasEnfant = 0;
+        foreach ($Enfant as $UnEnfant) {
+          if ($UnEnfant['REPASSURPLACE']==1)
+          {
+            $NBrepasEnfant++;
+          }
+        }
+        $UnUtilisateur['NBrepasEnfant'] = $NBrepasEnfant;
         $arrayName = array('NOPARTICIPANT' => $this->session->numero, );
         $LesMembresEquipes = $this->ModeleUtilisateur->GetMembreEquipe($arrayName);
         $UnUtilisateur['Responsable'] = $this->ModeleUtilisateur->GetConnexionVisiteur($Participant = array('noparticipant' => $this->session->numero));
@@ -38,7 +90,7 @@ class Responsable extends CI_Controller {
         $NombreDInscrit = count($UnUtilisateur['LesUtilisateur']);
         $UnUtilisateur['NombreDInscrit'] = $NombreDInscrit;
         $UnUtilisateur['LesParcours'] = $this->ModeleUtilisateur->GetParcours();
-        $UnUtilisateur['ParcoursChoisis'] = $this->ModeleUtilisateur->GetChoisir($arrayName = array('noequipe' =>$this->session->numeroEquipe));
+        $UnUtilisateur['ParcoursChoisis'] = $this->ModeleUtilisateur->GetChoisir($arrayName = array('NOEQUIPE' =>$this->session->numeroEquipe,'ANNEE' => date('Y')));
         $this->load->view('Responsable/Accueil',$UnUtilisateur);
         foreach ($LesMembresEquipes as $UnMembreEquipe) 
         {
@@ -167,16 +219,26 @@ class Responsable extends CI_Controller {
     }
     public function inscriptionEquipe()
     {
-      $ResultChoisir = $this->ModeleUtilisateur->GetChoisir($arrayName = array('noequipe' =>$this->session->numeroEquipe));
+      $Choisir = array(
+        'NOEQUIPE' =>$this->session->numeroEquipe, 
+        'ANNEE' => date('Y'),
+        'NOPARCOURS' => $this->input->post('Parcours')
+      );
+      $ResultChoisir = $this->ModeleUtilisateur->GetChoisir($arrayName = array('NOEQUIPE' =>$this->session->numeroEquipe,'ANNEE' => date('Y')));
       if (!(isset($ResultChoisir)))
       {
-        $Choisir = array(
-          'NOEQUIPE' =>$this->session->numeroEquipe, 
-          'ANNEE' => date('Y'),
-          'NOPARCOURS' => $this->input->post('Parcours')
-        );
         $this->ModeleUtilisateur->AddChoisir($Choisir);
-        redirect('Responsable');
+        $Sinscrire = array(
+          'NOEQUIPE' => $this->session->numeroEquipe,
+          'ANNEE'=> date('Y'),
+          'DATEINSCRIPTION'=> date('Y-m-d'));
+          var_dump($Sinscrire);
+        $this->ModeleUtilisateur->AddSinscrire($Sinscrire);
       }
+      else
+      {
+        $this->ModeleUtilisateur->UpdateChoisir($Choisir);
+      }
+      redirect('Responsable');
     }
 }

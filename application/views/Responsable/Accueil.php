@@ -43,7 +43,7 @@
                               $repas = 'non';
                             }
                         echo "<tr><td>".$Responsable['NOM']." ".$Responsable['PRENOM']."</td><td>".$age."</td><td>".$repas."</td><td>".$Responsable['MAIL']."</td><td>".$Responsable['TELPORTABLE']."</td>";
-                        echo "<td>RESPONSABLE <a href='".site_url('Responsable/MonCompte')."'><button type='submit' name='ah' class='btn btn-success'>Modifier</button></a></td></tr>";
+                        echo "<td><a href='".site_url('Responsable/MonCompte')."'><button type='submit' name='ah' class='btn btn-success'>Modifier</button></a> RESPONSABLE </td></tr>";
                           ?>
                         
                         <?php foreach ($LesUtilisateur as $UnUtilisateur) 
@@ -63,7 +63,15 @@
                             //echo $date.'<br>'; // naissance
                             $ageAnnee = $aujourd-$date;
                             //echo $ageAnnee.'<br>'; // la différance 
-                            $age=substr($ageAnnee,0,2);
+                            if (strlen($ageAnnee) == 6) { // au dela de 10 ans
+                              $age=substr($ageAnnee,0,2);
+                            }
+                            if (strlen($ageAnnee) == 5) { // de 1 a 9 ans
+                              $age=substr($ageAnnee,0,1);
+                            }
+                            if (strlen($ageAnnee) == 4) { // moins de 1 ans
+                              $age='0';
+                            }
                             //echo $age;//age total
                             if ($UnUtilisateur['REPASSURPLACE']==1) {
                               $repas = "oui";
@@ -77,8 +85,20 @@
                             echo "<a href='".site_url('Responsable/modifierRandonneur/'.$UnUtilisateur['NOPARTICIPANT'])."'><button type='submit' name='ah' class='btn btn-success'>Modifier</button></a>
                               <a href=".site_url('Responsable/SupprimerParticipant/'.$UnUtilisateur['NOPARTICIPANT'].'/')."><button type='submit' name='ah' class='btn btn-danger' onclick='return dernierechance()'>Supprimer</button></a></td></tr>";
                           }
-                      } ?>
+                        } ?>
               </table>
+              <h4 align='center'>Votre équipe est composée de :</h4> 
+              <ul>
+              <?php $prixAdultesInscri = $this->session->AnneeEnCours['TARIFINSCRIPTIONADULTE'] * $NBAdultesInscri //on affiche les sous qu'ils devront?>
+              <?php $prixAdultesRepas = $this->session->AnneeEnCours['TARIFREPASADULTE'] * $NBrepasAdulte?>
+              <?php $PrixEnfantsInscri = $this->session->AnneeEnCours['TARIFINSCRIPTIONENFANT'] * $NBEnfantsInscri?>
+              <?php $prixEnfantsRepas = $this->session->AnneeEnCours['TARIFREPASENFANT'] * $NBrepasEnfant?>
+                <li><?php echo $NBAdultesInscri ?> adulte(s) <b><?php echo $prixAdultesInscri?>€</b> (<?php echo $this->session->AnneeEnCours['TARIFINSCRIPTIONADULTE']?>€/adulte)</li>
+                <li><?php echo $NBrepasAdulte ?> repas adulte(s) <b><?php echo $prixAdultesRepas?>€</b> (<?php echo $this->session->AnneeEnCours['TARIFREPASADULTE']?>€/repas adulte)</li>
+                <li><?php echo $NBEnfantsInscri ?> enfant(s) <b><?php echo $PrixEnfantsInscri?>€</b> (<?php echo $this->session->AnneeEnCours['TARIFINSCRIPTIONENFANT']?>€/enfant)</li>
+                <li><?php echo $NBrepasEnfant ?> repas enfant(s) <b><?php echo $prixEnfantsRepas?>€</b> (<?php echo $this->session->AnneeEnCours['TARIFREPASENFANT']?>€/repas enfant)</li>
+              </ul>
+              <p>Pour un total de <b><?php echo $prixAdultesInscri + $prixAdultesRepas + $PrixEnfantsInscri + $prixEnfantsRepas?>€</b></p>
           </div>
       </section><br>
       

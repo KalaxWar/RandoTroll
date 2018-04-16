@@ -16,6 +16,13 @@ foreach ($LesParcours as $UnParcours) {
   echo '>Parcours '.$UnParcours['KILOMETRAGE'].' kms </option>';
 }
 echo '</select></p>';
-
+if ($ParcoursChoisis) {
+    echo '<p align="center"><input type="submit" class="btn btn-info" value="Changer de parcours"></p>';
+}
+else
+{
+    echo "<p align='center'><input type='submit' class='btn btn-info' value='Inscrire'></p>";
+}
 ?>
-<p align='center'><input type="submit" class='btn btn-info' value='Inscrire'></p> <br><br>
+
+ <br><br>
