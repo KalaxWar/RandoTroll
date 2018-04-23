@@ -11,7 +11,7 @@
         <section>
           <div class="section-inner" style="background-color:#FDBA23;padding:20px;">
             <h2 align='center'>Les membres de l'équipe</h2> <br>
-            <h4 align='center'><span class='glyphicon glyphicon-flag'></span> Nom de votre équipe : <b><?php echo $Responsable['NOMEQUIPE'] ?></b></h4>
+            <h4 align='center'><span class='glyphicon glyphicon-flag'></span> Nom de votre équipe : <b><?php echo $Responsable['NOMEQUIPE'] ?></b> <?php echo "<a href='".site_url('Responsable/MonCompte')."'><button type='submit' name='ah' class='btn btn-warning btn-xs'>Modifier le nom d'équipe</button></a>"?></h4>
             <p align='center'>Après avoir terminé de rentrer les membres de l'équipe oublier pas de l'inscrire, pour l'inscrire <a href="#Select-parcours">CLIQUEZ ICI</a></p>
             <p align='center'><span class='glyphicon glyphicon-exclamation-sign'></span> <?php echo $this->session->AnneeEnCours['MAXPAREQUIPE']; ?> personne pourrons composer votre équipe. Vous pouvez dépasser le nombre mais si il y a trop de personne l'administrateur risque de ne pas valider l'inscription</p> <br>
 
@@ -32,8 +32,22 @@
                             //echo $aujourd.'<br>'; // today
                             //echo $date.'<br>'; // naissance
                             $ageAnnee = $aujourd-$date;
+                            if (strlen($ageAnnee) == 8) { // au dela de 1000 ans LOL ;)
+                              $age=substr($ageAnnee,0,4);
+                            }
+                            if (strlen($ageAnnee) == 7) { // au dela de 100 ans
+                              $age=substr($ageAnnee,0,3);
+                            }
+                            if (strlen($ageAnnee) == 6) { // au dela de 10 ans
+                              $age=substr($ageAnnee,0,2);
+                            }
+                            if (strlen($ageAnnee) == 5) { // de 1 a 9 ans
+                              $age=substr($ageAnnee,0,1);
+                            }
+                            if (strlen($ageAnnee) == 4) { // moins de 1 ans
+                              $age='0';
+                            }
                             //echo $ageAnnee.'<br>'; // la différance 
-                            $age=substr($ageAnnee,0,2);
                             //echo $age;//age total
                             if ($Responsable['REPASSURPLACE']==1) {
                               $repas = "oui";
@@ -63,6 +77,12 @@
                             //echo $date.'<br>'; // naissance
                             $ageAnnee = $aujourd-$date;
                             //echo $ageAnnee.'<br>'; // la différance 
+                            if (strlen($ageAnnee) == 8) { // au dela de 1000 ans LOL ;)
+                              $age=substr($ageAnnee,0,4);
+                            }
+                            if (strlen($ageAnnee) == 7) { // au dela de 100 ans
+                              $age=substr($ageAnnee,0,3);
+                            }
                             if (strlen($ageAnnee) == 6) { // au dela de 10 ans
                               $age=substr($ageAnnee,0,2);
                             }

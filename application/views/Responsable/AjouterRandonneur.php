@@ -48,8 +48,8 @@ else
     <br><br>
     <div class="checkbox">
     <label for="sexe"><span class='textBlanc'><b>Sexe : *</b></span></label>
-    <label><input type="radio" name="sexe" required value='H'<?php if (isset($SEXE)) { if($SEXE=='H'){echo 'checked';}}?>><span class='textBlanc'> <b>Homme</b></span>
-    <label><input type="radio" name="sexe" required value='F'<?php if (isset($SEXE)) { if($SEXE=='F'){echo 'checked';}}?>><span class='textBlanc'><b>Femme </b></span>
+    <label><input type="radio" name="sexe" required value='H'<?php if (isset($SEXE)) { if($SEXE=='H'){echo 'checked';}}?>><span class='textBlanc'> <b>Homme</b></span></label>
+    <label><input type="radio" name="sexe" required value='F'<?php if (isset($SEXE)) { if($SEXE=='F'){echo 'checked';}}?>><span class='textBlanc'><b>Femme </b></span></label>
     </div>
     <br><br>
     <div class="form-group">

@@ -13,6 +13,9 @@ class ModeleUtilisateur extends CI_Model {
     if (isset($Value['mail'])) 
     {
       $this->db->where('MAIL', $Value['mail']);
+    }
+    if (isset($Value['mdp'])) 
+    {
       $this->db->where('MOTDEPASSE', $Value['mdp']);
     }
     if (isset($Value['noparticipant'])) 
@@ -33,7 +36,22 @@ class ModeleUtilisateur extends CI_Model {
   {
     $this->db->select('*');
     $this->db->from('responsable');
+    if (isset($Value['noparticipant']))
+    {
+    $this->db->where_not_in('NOPARTICIPANT', $Value['noparticipant']);
+    }
     $this->db->where('MAIL', $Value['mail']);
+    return $this->db->count_all_results();
+  }
+  public function VerifNomEquipe($Value)
+  {
+    $this->db->select('*');
+    $this->db->from('equipe');
+    if (isset($Value['noequipe']))
+    {
+    $this->db->where_not_in('NOEQUIPE', $Value['noequipe']);
+    }
+    $this->db->where('NOMEQUIPE', $Value['nomequipe']);
     return $this->db->count_all_results();
   }
   public function getRandonneur($Value)
@@ -44,6 +62,7 @@ class ModeleUtilisateur extends CI_Model {
   public function AddParticipant($Value)
   {
     $this->db->insert('participant', $Value);
+    return $this->db->insert_id();
   }
   public function AddResponsable($Value)
   {
@@ -91,6 +110,11 @@ class ModeleUtilisateur extends CI_Model {
     $this->db->where('NOPARTICIPANT', $Value['NOPARTICIPANT']);
     $this->db->update('randonneur', $Value);
   }
+  public function UpdateResponsable($Value)
+  {
+    $this->db->where('NOPARTICIPANT', $Value['NOPARTICIPANT']);
+    $this->db->update('responsable', $Value);
+  }
   public function UpdateParticipant($Value)
   {
     $this->db->where('NOPARTICIPANT', $Value['NOPARTICIPANT']);
@@ -100,6 +124,11 @@ class ModeleUtilisateur extends CI_Model {
   {
     $this->db->where('NOPARTICIPANT', $Value['NOPARTICIPANT']);
     $this->db->update('membrede', $Value);
+  }
+  public function UpdateEquipe($Value)
+  {
+    $this->db->where('NOEQUIPE', $Value['NOEQUIPE']);
+    $this->db->update('equipe', $Value);
   }
   public function DeleteParticipant($Value)
   {
@@ -156,5 +185,15 @@ class ModeleUtilisateur extends CI_Model {
     $this->db->where('DATEDENAISSANCE >', $Value['DATE']);
     $requete = $this->db->get('participant');
     return $requete->result_array();
+  }
+  public function GetAdministrateur($Value)
+  {
+    $this->db->select('*');
+    $this->db->where('EMAIL', $Value['email']);
+    $this->db->join('benevole', 'benevole.NOCONTRIBUTEUR = contributeur.NOCONTRIBUTEUR');
+    $this->db->join('administrateur', 'benevole.NOCONTRIBUTEUR = administrateur.NOCONTRIBUTEUR');
+    $this->db->where('MOTDEPASSE', $Value['mdp']);
+    $requete = $this->db->get('contributeur');
+    return $requete->row_array();
   }
 }

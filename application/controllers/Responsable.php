@@ -172,9 +172,8 @@ class Responsable extends CI_Controller {
         'DATEDENAISSANCE' =>$date,
         'SEXE' =>$this->input->post('sexe')
         );
-      $this->ModeleUtilisateur->AddParticipant($Participant); // ajout du participant dans la BDD
-
-      $UnParticipant = $this->ModeleUtilisateur->getParticipant($Participant); //récupère le numero du nouveau participant
+      $numParticipant = $this->ModeleUtilisateur->AddParticipant($Participant); // ajout du participant dans la BDD
+      $UnParticipant = $this->ModeleUtilisateur->getParticipant($arrayName = array('NOPARTICIPANT' => $numParticipant)); //récupère le numero du nouveau participant
       if ($this->input->post('txtMail') == '') { $mail = null;} else {$mail = $this->input->post('txtMail');}
       if ($this->input->post('txtTel') == '') { $tel = null;} else {$tel = $this->input->post('txtTel');}
       $randonneur = array(
@@ -213,9 +212,55 @@ class Responsable extends CI_Controller {
 
     }
 
-    public function MonCompte()
+    public function MonCompte($switch=null)
     {
-      $this->load->view('Responsable/Compte');
+      switch ($switch) {
+        case '1': #modifier mot de passe
+          $this->load->view('Responsable/modifierMDP');
+          if($this->input->post('submit'))
+          {
+            $this->ModeleUtilisateur->UpdateResponsable($arrayName = array('NOPARTICIPANT' =>$this->session->numero,'MOTDEPASSE' =>$this->input->post('txtMdp')));
+            redirect('Responsable/MonCompte');
+          }
+          break;
+        
+        default: #modifier les infos du compte
+        $Utilisateur = $this->ModeleUtilisateur->GetConnexionVisiteur($Utilisateur = array('noparticipant' => $this->session->numero));
+        $this->load->view('Responsable/Compte',$Utilisateur);
+        if($this->input->post('submit'))
+          {
+            $MailExisteResponsable = $this->ModeleUtilisateur->VerifMailResponsable($Utilisateur = array('mail' => $this->input->post('txtMail'),'noparticipant'=>$this->session->numero));
+            $MailExisteRandonneur['LesRandonneur'] = $this->ModeleUtilisateur->getRandonneur($Utilisateur = array('MAIL' => $this->input->post('txtMail')));
+            $NomEquipeExiste = $this->ModeleUtilisateur->VerifNomEquipe($Equipe = array('nomequipe' => $this->input->post('txtEquipe'),'noequipe'=>$this->session->numeroEquipe));
+            if ($MailExisteResponsable ==0)
+            { //mail n'existe pas
+              if ($NomEquipeExiste==0) 
+                {
+                if (!($MailExisteRandonneur == null)) {
+                    foreach ($MailExisteRandonneur['LesRandonneur'] as $UnRandonneur) {
+                        $this->ModeleUtilisateur->UpdateRandonneur($arrayName = array('NOPARTICIPANT' =>$UnRandonneur['NOPARTICIPANT'], 'MAIL' => null ));
+                    }
+                }
+                $this->ModeleUtilisateur->UpdateResponsable($arrayName = array('NOPARTICIPANT' =>$this->session->numero,'MAIL' =>$this->input->post('txtMail'),'TELPORTABLE' =>$this->input->post('txtTel')));
+                $this->ModeleUtilisateur->UpdateParticipant($arrayName = array('NOPARTICIPANT' =>$this->session->numero,'NOM' =>$this->input->post('txtNom'),'PRENOM' =>$this->input->post('txtPrenom')));
+                $this->ModeleUtilisateur->UpdateEquipe($arrayName = array('NOEQUIPE' =>$this->session->numeroEquipe,'NOMEQUIPE' =>$this->input->post('txtEquipe')));
+                redirect('Responsable/MonCompte');
+              }
+              else
+                {
+                  $Value['Value'] = 'Le nom d\'équipe est déjà utilisé cette année.';
+                  $this->load->view('BoiteAlerte',$Value);
+                }
+            }
+            else
+            {
+              $Value['Value'] = 'Impossible adresse email déjà utilisée par un autre responsable.';
+              $this->load->view('BoiteAlerte',$Value);
+            }
+          }
+          break;
+      }
+      
     }
     public function inscriptionEquipe()
     {

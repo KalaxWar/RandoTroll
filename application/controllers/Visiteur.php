@@ -93,4 +93,32 @@ class Visiteur extends CI_Controller {
         $this->session->sess_destroy();
             redirect('Visiteur');
     }
+
+    public function admin()
+    {
+        $this->load->view('Connexion/Admin');
+        $valide = $this->input->post('valide');
+        if ($valide == 1)
+        {
+            $Utilisateur = $this->ModeleUtilisateur->GetAdministrateur($Utilisateur = array('email' => $this->input->post('txtLogin'), 'mdp'=> $this->input->post('txtMdp')));
+            var_dump($Utilisateur);
+            if (!($Utilisateur == null))
+            {
+                $this->session->profil = $Utilisateur['PROFIL'];
+                $this->session->nom = $Utilisateur['NOM'];
+                $this->session->prenom = $Utilisateur['PRENOM'];
+                $this->session->mail = $Utilisateur['EMAIL'];
+                $this->session->numero = $Utilisateur['NOCONTRIBUTEUR'];
+                if ($Utilisateur['PROFIL'] == 'inscription') {
+                    redirect('Administrateur_Inscription');
+                }
+                if ($Utilisateur['PROFIL'] == 'organistation') {
+                    redirect('Administrateur_Organisation');
+                }
+                if ($Utilisateur['PROFIL'] == 'super') {
+                    redirect('Super_Administrateur');
+                }
+            }
+        }
+    }
 }

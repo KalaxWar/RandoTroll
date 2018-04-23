@@ -5,7 +5,6 @@
 <p class='textBlanc' align='center'>* = mention obligatoire</p>
 <?php
    echo form_open('Visiteur/inscription'); // j'ouvre mon form
-   $url = img_url('calendar.gif')
 ?> <!-- Fonction de Jquery -->
   <script> 
   $( function() {
