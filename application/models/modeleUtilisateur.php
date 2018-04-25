@@ -196,4 +196,14 @@ class ModeleUtilisateur extends CI_Model {
     $requete = $this->db->get('contributeur');
     return $requete->row_array();
   }
+  public function GetInscription($Value)
+  {
+    $requete = $this->db->get_where('sinscrire',$Value);
+    return $requete->result_array();
+  }
+  public function GetEquipe($Value)
+  {
+    $requete = $this->db->get_where('equipe',$Value);
+    return $requete->row_array();
+  }
 }

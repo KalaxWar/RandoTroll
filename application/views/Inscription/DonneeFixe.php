@@ -10,7 +10,7 @@
       <a class="navbar-brand" <?php echo "href='".site_url('Administrateur_Inscription')."'" ?>>Espace Administrateur</a>
     </div>
     <ul class="nav navbar-nav">
-      <li><a href="#">Relance paiement</a></li>
+      <li><a <?php echo "href='".site_url('Administrateur_Inscription/EquipePasPayer')."'" ?>>Relance paiement</a></li>
       <li><a href="#">Gestion paiement</a></li>
       <li><a href="#">Génération des tickets</a></li>
       <li><a href="#">Crée une promotion</a></li>

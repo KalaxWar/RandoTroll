@@ -6,17 +6,138 @@ class Administrateur_Inscription extends CI_Controller {
    {
      parent::__construct();
      $this->load->view('Template/EnTete');
+     $this->load->view('Inscription/DonneeFixe');
     }
 	public function index()
 	{
-        $this->load->view('Inscription/DonneeFixe');
-        $this->load->library('email');
-        $this->email->from('thomas.choanier.BTS@gmail.com', 'Administrateur RandoTroll');
-        $this->email->to('thomasdu22490@gmail.com'); 
-        $this->email->subject('Relance payemant RANDOTROLL');
-        $this->email->message("Bonjour,\r\nNous vous contactons aujourd'hui pour vous signaler que l'inscription de votre équipe à la course n'a pas été validé car il manque une somme de : 10€ \r\n Cordialement, l'équipe RANDOTROLL");	
-        if (!$this->email->send()){
-            $this->email->print_debugger();
+
+    }
+
+    public function EquipePasPayer()
+    {
+        $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
+        $this->session->AnneeEnCours = $AnneeEnCours; //je fait les 2 cathégories d'age (date de la course - la limite d'age)
+        $date= $AnneeEnCours['DATECOURSE'];
+        $an=substr($date,0,4); 
+        $mois=substr($date,5,2); 
+        $jour=substr($date,8,2);
+        $an = $an - $AnneeEnCours['LIMITEAGE'];
+        $LesInscrits = $this->ModeleUtilisateur->GetInscription($date = array( 'annee'=> date('Y')));
+        foreach ($LesInscrits as $UnInscrit) 
+        {
+            //$MembreEquipe = $this->ModeleUtilisateur->GetMembreEquipe($Utilisateur = array('noequipe' => $UnInscrit['NOEQUIPE'], 'annee'=> date('Y')));
+            //$UneEquipe['nom'] = $UnInscrit['NOM'];
+            $NomEquipe = $this->ModeleUtilisateur->GetEquipe($Utilisateur = array( 'noequipe'=> $UnInscrit['NOEQUIPE']));
+            $UneEquipe['NomEquipe'] = $NomEquipe['NOMEQUIPE'];
+            $UneEquipe['NoEquipe'] = $NomEquipe['NOEQUIPE'];
+            $Adultes = $this->ModeleUtilisateur->GetAdulteEquipe($Utilisateur = array('NOEQUIPE' => $UnInscrit['NOEQUIPE'], 'DATE'=> $an.'/'.$mois.'/'.$jour));
+            $UneEquipe['NBAdultesInscri'] = count($Adultes);
+            $NBrepasAdulte = 0;
+            foreach ($Adultes as $UnAdulte) 
+            {
+                if ($UnAdulte['REPASSURPLACE']==1)
+                {
+                $NBrepasAdulte++;
+                }
+            }
+            $UneEquipe['NBrepasAdulte'] = $NBrepasAdulte;
+            $Enfant = $this->ModeleUtilisateur->GetEnfantEquipe($Utilisateur = array('NOEQUIPE' => $UnInscrit['NOEQUIPE'], 'DATE'=> $an.'/'.$mois.'/'.$jour));
+            $UneEquipe['NBEnfantsInscri'] = count($Enfant);
+            $NBrepasEnfant = 0;
+            foreach ($Enfant as $UnEnfant) {
+                if ($UnEnfant['REPASSURPLACE']==1)
+                {
+                    $NBrepasEnfant++;
+                }
+            }
+            $UneEquipe['NBrepasEnfant'] = $NBrepasEnfant;
+            $prixTotal = 0;
+            $prixTotal +=$this->session->AnneeEnCours['TARIFINSCRIPTIONADULTE'] * $UneEquipe['NBAdultesInscri']; //on affiche les sous qu'ils devront
+            $prixTotal +=$this->session->AnneeEnCours['TARIFREPASADULTE'] * $NBrepasAdulte;
+            $prixTotal +=$this->session->AnneeEnCours['TARIFINSCRIPTIONENFANT'] * $UneEquipe['NBEnfantsInscri'];
+            $prixTotal +=$this->session->AnneeEnCours['TARIFREPASENFANT'] * $NBrepasEnfant;
+            $UneEquipe['PrixTotal'] = $prixTotal;
+            $UneEquipe['MontantPaye'] = $UnInscrit['MONTANTPAYE'];
+            if ($UnInscrit['MONTANTPAYE'] < $prixTotal) {
+                $UneEquipe['Manque'] = $prixTotal - $UnInscrit['MONTANTPAYE'];
+                $LesEquipes[] = $UneEquipe;
+            }
         }
+        $Equipes['LesEquipes'] = $LesEquipes;
+        $Equipes['datefin'] = $AnneeEnCours['DATECLOTUREINSCRIPTION'];
+        $this->load->view('Inscription/Relance', $Equipes);
+    }
+    public function Relance()
+    {
+        if($this->input->post('submit')) 
+        {  
+            $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
+            $this->session->AnneeEnCours = $AnneeEnCours; //je fait les 2 cathégories d'age (date de la course - la limite d'age)
+            $date= $AnneeEnCours['DATECOURSE'];
+            $an=substr($date,0,4); 
+            $mois=substr($date,5,2); 
+            $jour=substr($date,8,2);
+            $an = $an - $AnneeEnCours['LIMITEAGE'];
+            $LesInscrits = $this->ModeleUtilisateur->GetInscription($date = array( 'annee'=> date('Y')));
+            foreach ($LesInscrits as $UnInscrit) 
+            {
+                $Equipe = $this->ModeleUtilisateur->GetEquipe($Utilisateur = array( 'noequipe'=> $UnInscrit['NOEQUIPE']));
+                $NomEquipe = $Equipe['NOMEQUIPE'];
+                $NoEquipe = $Equipe['NOEQUIPE'];
+                $NoResponsable = $Equipe['NOPAR_RESPONSABLE'];
+                $Adultes = $this->ModeleUtilisateur->GetAdulteEquipe($Utilisateur = array('NOEQUIPE' => $UnInscrit['NOEQUIPE'], 'DATE'=> $an.'/'.$mois.'/'.$jour));
+                $NBAdultesInscri = count($Adultes);
+                $NBrepasAdulte = 0;
+                foreach ($Adultes as $UnAdulte) 
+                {
+                    if ($UnAdulte['REPASSURPLACE']==1)
+                    {
+                    $NBrepasAdulte++;
+                    }
+                }
+                $Enfant = $this->ModeleUtilisateur->GetEnfantEquipe($Utilisateur = array('NOEQUIPE' => $UnInscrit['NOEQUIPE'], 'DATE'=> $an.'/'.$mois.'/'.$jour));
+                $NBEnfantsInscri = count($Enfant);
+                $NBrepasEnfant = 0;
+                foreach ($Enfant as $UnEnfant) {
+                    if ($UnEnfant['REPASSURPLACE']==1)
+                    {
+                        $NBrepasEnfant++;
+                    }
+                }
+                $prixTotal = 0;
+                $prixTotal +=$this->session->AnneeEnCours['TARIFINSCRIPTIONADULTE'] * $NBAdultesInscri; //on affiche les sous qu'ils devront
+                $prixTotal +=$this->session->AnneeEnCours['TARIFREPASADULTE'] * $NBrepasAdulte;
+                $prixTotal +=$this->session->AnneeEnCours['TARIFINSCRIPTIONENFANT'] * $NBEnfantsInscri;
+                $prixTotal +=$this->session->AnneeEnCours['TARIFREPASENFANT'] * $NBrepasEnfant;
+                $MontantPaye = $UnInscrit['MONTANTPAYE'];
+                $Responsable = $this->ModeleUtilisateur->GetConnexionVisiteur($Utilisateur = array('noparticipant' => $Equipe['NOPAR_RESPONSABLE']));
+                if ($MontantPaye < $prixTotal)
+                {
+                    $Manque = $prixTotal - $MontantPaye;
+                    $this->load->library('email');
+                    $this->email->from('thomas.choanier.BTS@gmail.com', 'Administrateur RandoTroll');
+                    $this->email->to($Responsable['MAIL']); 
+                    $this->email->subject('Relance payemant RANDOTROLL');
+                    $message = $this->input->post('email');
+                    $message .= "\r\nil manque la somme de : ".$Manque." €.\r\nAttention la date de cloture des inscription est le ".$AnneeEnCours['DATECLOTUREINSCRIPTION']."\r\nCordialement, l'équipe RANDOTROLL";
+                    $this->email->message($message);	
+                    if (!$this->email->send())
+                    {
+                        $this->email->print_debugger();
+                    }
+                }
+            }
+        }
+    }
+    public function QRcode()
+    {
+        $this->load->library('ciqrcode');
+	
+        $params['data'] = '';
+        $params['level'] = 'H';
+        $params['size'] = 10;
+        $params['savename'] = FCPATH.'test.png';
+        $this->ciqrcode->generate($params);
+        $this->load->view('Inscription/qrcode');
     }
 }

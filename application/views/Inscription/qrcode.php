@@ -1,0 +1,1 @@
+<?php echo '<img src="'.base_url().'test.png" />';?>
