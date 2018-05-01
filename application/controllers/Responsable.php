@@ -18,6 +18,8 @@ class Responsable extends CI_Controller {
      $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
      $this->session->AnneeEnCours = $AnneeEnCours; //je fait les 2 cathégories d'age (date de la course - la limite d'age)
      $date= $AnneeEnCours['DATECOURSE'];
+     //$date = date_create($date);
+     //$date = date_format($date,"d/m/Y")
      $an=substr($date,0,4); 
      $mois=substr($date,5,2); 
      $jour=substr($date,8,2);

@@ -201,9 +201,33 @@ class ModeleUtilisateur extends CI_Model {
     $requete = $this->db->get_where('sinscrire',$Value);
     return $requete->result_array();
   }
-  public function GetEquipe($Value)
+  public function GetWhereEquipe($Value)
   {
     $requete = $this->db->get_where('equipe',$Value);
     return $requete->row_array();
+  }
+  public function GetEquipeParAnnee($Value)
+  {
+    $this->db->select('*');
+    $this->db->join('equipe', 'sinscrire.NOEQUIPE = equipe.NOEQUIPE');
+    $this->db->join('responsable', 'responsable.NOPARTICIPANT = equipe.NOPAR_RESPONSABLE');
+    $this->db->join('participant', 'equipe.NOPAR_RESPONSABLE = participant.NOPARTICIPANT');
+    $this->db->where('ANNEE', $Value['ANNEE']);
+    if (isset($Value['NOEQUIPE']))
+    {
+      $this->db->where('sinscrire.NOEQUIPE', $Value['NOEQUIPE']);
+    }
+    $requete = $this->db->get('sinscrire');
+    if (isset($Value['NOEQUIPE']))
+    {
+      return $requete->row_array();
+    }
+    return $requete->result_array();
+  }
+  public function UpdateSinscrire($Value)
+  {
+    $this->db->where('NOEQUIPE', $Value['NOEQUIPE']);
+    $this->db->where('ANNEE', $Value['ANNEE']);
+    $this->db->update('sinscrire', $Value);
   }
 }

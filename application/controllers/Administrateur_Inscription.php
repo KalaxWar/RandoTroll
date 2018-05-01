@@ -4,17 +4,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Administrateur_Inscription extends CI_Controller {
 	public function __construct()
    {
-     parent::__construct();
-     $this->load->view('Template/EnTete');
-     $this->load->view('Inscription/DonneeFixe');
+    parent::__construct();
+    
     }
 	public function index()
 	{
-
+        $this->load->view('Template/EnTete');
+        $this->load->view('Inscription/DonneeFixe');
     }
 
     public function EquipePasPayer()
     {
+        $this->load->view('Template/EnTete');
+        $this->load->view('Inscription/DonneeFixe');
         $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
         $this->session->AnneeEnCours = $AnneeEnCours; //je fait les 2 cathégories d'age (date de la course - la limite d'age)
         $date= $AnneeEnCours['DATECOURSE'];
@@ -27,7 +29,7 @@ class Administrateur_Inscription extends CI_Controller {
         {
             //$MembreEquipe = $this->ModeleUtilisateur->GetMembreEquipe($Utilisateur = array('noequipe' => $UnInscrit['NOEQUIPE'], 'annee'=> date('Y')));
             //$UneEquipe['nom'] = $UnInscrit['NOM'];
-            $NomEquipe = $this->ModeleUtilisateur->GetEquipe($Utilisateur = array( 'noequipe'=> $UnInscrit['NOEQUIPE']));
+            $NomEquipe = $this->ModeleUtilisateur->GetWhereEquipe($Utilisateur = array( 'noequipe'=> $UnInscrit['NOEQUIPE']));
             $UneEquipe['NomEquipe'] = $NomEquipe['NOMEQUIPE'];
             $UneEquipe['NoEquipe'] = $NomEquipe['NOEQUIPE'];
             $Adultes = $this->ModeleUtilisateur->GetAdulteEquipe($Utilisateur = array('NOEQUIPE' => $UnInscrit['NOEQUIPE'], 'DATE'=> $an.'/'.$mois.'/'.$jour));
@@ -69,6 +71,8 @@ class Administrateur_Inscription extends CI_Controller {
     }
     public function Relance()
     {
+        $this->load->view('Template/EnTete');
+        $this->load->view('Inscription/DonneeFixe');
         if($this->input->post('submit')) 
         {  
             $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
@@ -81,7 +85,7 @@ class Administrateur_Inscription extends CI_Controller {
             $LesInscrits = $this->ModeleUtilisateur->GetInscription($date = array( 'annee'=> date('Y')));
             foreach ($LesInscrits as $UnInscrit) 
             {
-                $Equipe = $this->ModeleUtilisateur->GetEquipe($Utilisateur = array( 'noequipe'=> $UnInscrit['NOEQUIPE']));
+                $Equipe = $this->ModeleUtilisateur->GetWhereEquipe($Utilisateur = array( 'noequipe'=> $UnInscrit['NOEQUIPE']));
                 $NomEquipe = $Equipe['NOMEQUIPE'];
                 $NoEquipe = $Equipe['NOEQUIPE'];
                 $NoResponsable = $Equipe['NOPAR_RESPONSABLE'];
@@ -131,6 +135,8 @@ class Administrateur_Inscription extends CI_Controller {
     }
     public function QRcode()
     {
+        $this->load->view('Template/EnTete');
+        $this->load->view('Inscription/DonneeFixe');
         $this->load->library('ciqrcode');
 	
         $params['data'] = '';
@@ -139,5 +145,32 @@ class Administrateur_Inscription extends CI_Controller {
         $params['savename'] = FCPATH.'test.png';
         $this->ciqrcode->generate($params);
         $this->load->view('Inscription/qrcode');
+    }
+    public function GestionPaiement()
+    {
+        $this->load->view('Template/EnTete');
+        $this->load->view('Inscription/DonneeFixe');
+
+        $LesEquipesAnneeCourante['LesEquipes'] = $this->ModeleUtilisateur->GetEquipeParAnnee($Utilisateur = array('ANNEE' =>date('Y')));
+        $this->load->view('Inscription/GestionPaiement/navigation');
+        $this->load->view('Inscription/GestionPaiement/recherche',$LesEquipesAnneeCourante);
+        if($this->input->post('submit'))
+        {
+            $UneEquipe = $this->ModeleUtilisateur->GetEquipeParAnnee($Utilisateur = array('ANNEE' =>date('Y'),'NOEQUIPE' =>$this->input->post('equipe')));
+            $this->load->view('Inscription/GestionPaiement/AffichageEquipe', $UneEquipe);
+        }
+        if($this->input->post('submit2'))
+        {
+            $this->ModeleUtilisateur->UpdateSinscrire($Utilisateur = array('ANNEE' =>date('Y'),'NOEQUIPE' =>$this->input->post('noequipe'),'MONTANTPAYE'=>$this->input->post('txtPaye'),'MONTANTREMBOURSE' =>$this->input->post('txtRembourse'), 'MODEREGLEMENT'=>$this->input->post('reglement')));
+            $UneEquipe = $this->ModeleUtilisateur->GetEquipeParAnnee($Utilisateur = array('ANNEE' =>date('Y'),'NOEQUIPE' =>$this->input->post('noequipe')));
+            $this->load->view('Inscription/GestionPaiement/AffichageEquipe', $UneEquipe);
+        }
+        
+    }
+    public function Ticket()
+    {
+        define('FPDF_FONTPATH',$this->config->item('fonts_path'));
+        $this->load->library('fpdf');
+        $this->load->view('Inscription/ticket');
     }
 }

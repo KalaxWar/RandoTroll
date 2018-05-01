@@ -11,9 +11,8 @@
     </div>
     <ul class="nav navbar-nav">
       <li><a <?php echo "href='".site_url('Administrateur_Inscription/EquipePasPayer')."'" ?>>Relance paiement</a></li>
-      <li><a href="#">Gestion paiement</a></li>
-      <li><a href="#">Génération des tickets</a></li>
-      <li><a href="#">Crée une promotion</a></li>
+      <li><a <?php echo "href='".site_url('Administrateur_Inscription/GestionPaiement')."'" ?>>Gestion paiement</a></li>
+      <li><a <?php echo "href='".site_url('Administrateur_Inscription/ticket')."'" ?>>Génération des tickets</a></li>
       <li><a href="#">Relance anciens participant</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">

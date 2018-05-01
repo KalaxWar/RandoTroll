@@ -14,7 +14,11 @@
       buttonImageOnly: false,
       buttonText: "Calendrier",
       changeMonth: true,
-      changeYear: true
+      changeYear: true,
+      monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+      monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+      dayNamesMin: ['Dim.', 'Lu.', 'Ma.', 'Me.', 'Je.', 'Ve.', 'Sa.'],
+      
     });
   } );
   </script> <!-- J'écris ensuite mon formulaire avec les contrôles de saisies -->
