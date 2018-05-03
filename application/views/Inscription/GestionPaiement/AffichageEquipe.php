@@ -45,6 +45,10 @@ else
 {
     echo '>Chèque</option>';
 }
+//-------------
+if ($MODEREGLEMENT == 'Sponsort | Gratuit') {
+    echo '<option value="Sponsort | Gratuit" selected> Sponsort | Gratuit</option>';
+}
 ?>
 
 <input type="hidden" name="noequipe" value='<?php echo $NOEQUIPE ?>'>
@@ -53,3 +57,8 @@ else
 </tr>
 </table>
 </form>
+<?php
+echo form_open('Administrateur_Inscription/GestionPaiement');
+?>
+<input type="hidden" name="noequipe" value='<?php echo $NOEQUIPE ?>'>
+<p align='center'   ><input type="submit" value="Forcer la validation de l'inscription" name='submit3'class="btn btn-success"></p>

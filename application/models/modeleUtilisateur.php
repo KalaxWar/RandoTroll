@@ -230,4 +230,15 @@ class ModeleUtilisateur extends CI_Model {
     $this->db->where('ANNEE', $Value['ANNEE']);
     $this->db->update('sinscrire', $Value);
   }
+  public function GetEquipeValide()
+  {
+    $this->db->select('*');
+    $this->db->where('DATEVALIDATION <>', NULL);
+    $this->db->join('membrede', 'membrede.NOEQUIPE = sinscrire.NOEQUIPE');
+    $this->db->join('equipe', 'sinscrire.NOEQUIPE = equipe.NOEQUIPE');
+    $this->db->join('participant', 'participant.NOPARTICIPANT = membrede.NOPARTICIPANT');
+    $this->db->order_by('equipe.NOEQUIPE', 'ASC');
+    $requete = $this->db->get('sinscrire');
+    return $requete->result_array();
+  }
 }
