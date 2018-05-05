@@ -241,4 +241,84 @@ class ModeleUtilisateur extends CI_Model {
     $requete = $this->db->get('sinscrire');
     return $requete->result_array();
   }
+  public function GetNombreEquipeInscrite($Value)
+  {
+    $this->db->where('sinscrire.ANNEE', $Value['ANNEE']);
+    $this->db->where('parcours.NOPARCOURS', $Value['NOPARCOURS']);
+    $this->db->where('sinscrire.DATEVALIDATION <>', null);
+    $this->db->from('sinscrire');
+    $this->db->join('choisir', 'choisir.NOEQUIPE = sinscrire.NOEQUIPE');
+    $this->db->join('parcours', 'choisir.NOPARCOURS = parcours.NOPARCOURS');
+    return $this->db->count_all_results(); 
+  }
+  /*public function GetNombreParticipantInscrit($Value)
+  {
+    $this->db->where('sinscrire.ANNEE', $Value['ANNEE']);
+    $this->db->where('parcours.NOPARCOURS', $Value['NOPARCOURS']);
+    $this->db->where('sinscrire.DATEVALIDATION <>', null);
+    $this->db->from('membrede');
+    $this->db->join('equipe', 'equipe.NOEQUIPE = membrede.NOEQUIPE');
+    $this->db->join('sinscrire', 'sinscrire.NOEQUIPE = equipe.NOEQUIPE');
+    $this->db->join('choisir', 'choisir.NOEQUIPE = sinscrire.NOEQUIPE');
+    $this->db->join('parcours', 'choisir.NOPARCOURS = parcours.NOPARCOURS');
+    return $this->db->count_all_results();
+  }*/
+  public function GetNombreParticipantAdulteInscrit($Value)
+  {
+    $this->db->where('sinscrire.ANNEE', $Value['ANNEE']);
+    $this->db->where('parcours.NOPARCOURS', $Value['NOPARCOURS']);
+    $this->db->where('sinscrire.DATEVALIDATION <>', null);
+    $this->db->where('DATEDENAISSANCE <', $Value['DATE']);
+    $this->db->from('participant');
+    $this->db->join('membrede', 'membrede.NOPARTICIPANT = participant.NOPARTICIPANT');
+    $this->db->join('equipe', 'equipe.NOEQUIPE = membrede.NOEQUIPE');
+    $this->db->join('sinscrire', 'sinscrire.NOEQUIPE = equipe.NOEQUIPE');
+    $this->db->join('choisir', 'choisir.NOEQUIPE = sinscrire.NOEQUIPE');
+    $this->db->join('parcours', 'choisir.NOPARCOURS = parcours.NOPARCOURS');
+    return $this->db->count_all_results();
+  }
+  public function GetNombreParticipantEnfantInscrit($Value)
+  {
+    $this->db->where('sinscrire.ANNEE', $Value['ANNEE']);
+    $this->db->where('parcours.NOPARCOURS', $Value['NOPARCOURS']);
+    $this->db->where('sinscrire.DATEVALIDATION <>', null);
+    $this->db->where('DATEDENAISSANCE >', $Value['DATE']);
+    $this->db->from('participant');
+    $this->db->join('membrede', 'membrede.NOPARTICIPANT = participant.NOPARTICIPANT');
+    $this->db->join('equipe', 'equipe.NOEQUIPE = membrede.NOEQUIPE');
+    $this->db->join('sinscrire', 'sinscrire.NOEQUIPE = equipe.NOEQUIPE');
+    $this->db->join('choisir', 'choisir.NOEQUIPE = sinscrire.NOEQUIPE');
+    $this->db->join('parcours', 'choisir.NOPARCOURS = parcours.NOPARCOURS');
+    return $this->db->count_all_results();
+  }
+  public function getTotalEncaisse($Value)
+  {
+    $this->db->where('sinscrire.ANNEE', $Value['ANNEE']);
+    $this->db->select_sum('MONTANTPAYE');
+    $this->db->select_sum('MONTANTREMBOURSE');
+    $requete = $this->db->get('sinscrire');
+    return $requete->row_array();
+  }
+  public function GetRepasAdultes($Value)
+  {
+    $this->db->where('sinscrire.ANNEE', $Value['ANNEE']);
+    $this->db->where('sinscrire.DATEVALIDATION <>', null);
+    $this->db->where('DATEDENAISSANCE <', $Value['DATE']);
+    $this->db->from('participant');
+    $this->db->join('membrede', 'membrede.NOPARTICIPANT = participant.NOPARTICIPANT');
+    $this->db->join('equipe', 'equipe.NOEQUIPE = membrede.NOEQUIPE');
+    $this->db->join('sinscrire', 'sinscrire.NOEQUIPE = equipe.NOEQUIPE');
+    return $this->db->count_all_results();
+  }
+  public function GetRepasEnfants($Value)
+  {
+    $this->db->where('sinscrire.ANNEE', $Value['ANNEE']);
+    $this->db->where('sinscrire.DATEVALIDATION <>', null);
+    $this->db->where('DATEDENAISSANCE >', $Value['DATE']);
+    $this->db->from('participant');
+    $this->db->join('membrede', 'membrede.NOPARTICIPANT = participant.NOPARTICIPANT');
+    $this->db->join('equipe', 'equipe.NOEQUIPE = membrede.NOEQUIPE');
+    $this->db->join('sinscrire', 'sinscrire.NOEQUIPE = equipe.NOEQUIPE');
+    return $this->db->count_all_results();
+  }
 }

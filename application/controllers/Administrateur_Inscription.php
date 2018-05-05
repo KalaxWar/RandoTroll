@@ -168,7 +168,6 @@ class Administrateur_Inscription extends CI_Controller {
         $this->load->view('Inscription/DonneeFixe');
 
         $LesEquipesAnneeCourante['LesEquipes'] = $this->ModeleUtilisateur->GetEquipeParAnnee($Utilisateur = array('ANNEE' =>date('Y')));
-        $this->load->view('Inscription/GestionPaiement/navigation');
         $this->load->view('Inscription/GestionPaiement/recherche',$LesEquipesAnneeCourante);
         if($this->input->post('submit'))
         {
