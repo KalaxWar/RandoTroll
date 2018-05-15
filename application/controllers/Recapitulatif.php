@@ -6,7 +6,7 @@ class ReCapitulatif extends CI_Controller {
 
     public function index()
     {
-        $this->TableauDeBord();
+        
     }
     public function TableauDeBord()
     {
@@ -43,10 +43,9 @@ class ReCapitulatif extends CI_Controller {
             $NombreRepasEnfants = $this->ModeleUtilisateur->GetRepasEnfants($Utilisateur = array('ANNEE' =>date('Y'),'DATE'=> $an.'-'.$mois.'-'.$jour));
             $tout['NombreRepasAdultes'] = $NombreRepasAdultes;
             $tout['NombreRepasEnfants'] = $NombreRepasEnfants;
-        var_dump($TotalEncaisse);
-        var_dump($tout);
+            $tout['TotalEncaisse'] = $TotalEncaisse;
         $this->load->view('Template/EnTete');
-        //$this->load->view('Inscription/DonneeFixe');
+        $this->load->view('Inscription/DonneeFixe');
         $this->load->view('Recapitulatif/TableauDeBord',$tout);
         
     }

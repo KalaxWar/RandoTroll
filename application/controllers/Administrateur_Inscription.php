@@ -11,7 +11,48 @@ class Administrateur_Inscription extends CI_Controller {
         $this->load->view('Template/EnTete');
         $this->load->view('Inscription/DonneeFixe');
     }
+    public function AncienParticipant()
+    {
+        $this->load->view('Template/EnTete');
+        //$this->load->view('Inscription/DonneeFixe');
+        $this->load->view('Inscription/AncienParticipant');
+        if($this->input->post('submit'))
+        {
+            $LesRandonneur = $this->ModeleUtilisateur->GetEmailRandonneur();
+            $LesResponsable = $this->ModeleUtilisateur->GetEmailResponsable();
+            var_dump($LesRandonneur);
+            var_dump($LesResponsable);
+            //---- Envoye des mails a tout les randonneurs
+            /*foreach ($LesRandonneur as $UnParticipant)
+            {
+                $this->load->library('email');
+                $this->email->from('thomas.choanier.BTS@gmail.com', 'L\'Equipe RandoTroll');
+                $this->email->to($UnParticipant['MAIL']);
+                $this->email->subject('Rappel de la course RANDOTROLL');
+                $message = $this->input->post('email');
+                $this->email->message($message);
+                if (!$this->email->send())
+                {
+                        $this->email->print_debugger();
+                }
+            }
+            //--- Envoye des mails a tout les responsables
+            foreach ($LesResponsable as $UnParticipant)
+            {
+                $this->load->library('email');
+                $this->email->from('thomas.choanier.BTS@gmail.com', 'L\'Equipe RandoTroll');
+                $this->email->to($UnParticipant['MAIL']);
+                $this->email->subject('Rappel de la course RANDOTROLL');
+                $message = $this->input->post('email');
+                $this->email->message($message);
+                if (!$this->email->send())
+                {
+                        $this->email->print_debugger();
+                }
+            }*/
+        }
 
+    }
     public function EquipePasPayer()
     {
         $this->load->view('Template/EnTete');

@@ -321,4 +321,19 @@ class ModeleUtilisateur extends CI_Model {
     $this->db->join('sinscrire', 'sinscrire.NOEQUIPE = equipe.NOEQUIPE');
     return $this->db->count_all_results();
   }
+  public function GetEmailRandonneur()
+  {
+    $this->db->select('distinct (MAIL)');
+    $this->db->join('randonneur', 'randonneur.NOPARTICIPANT = participant.NOPARTICIPANT');
+    $this->db->where('MAIL <>', 'NULL');
+    $requete = $this->db->get('participant');
+    return $requete->result_array();
+  }
+  public function GetEmailResponsable()
+  {
+    $this->db->select('distinct (MAIL)');
+    $this->db->join('responsable', 'responsable.NOPARTICIPANT = participant.NOPARTICIPANT');
+    $requete = $this->db->get('participant');
+    return $requete->result_array();
+  }
 }

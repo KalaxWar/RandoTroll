@@ -11,6 +11,7 @@ $totalEquipe = 0;
 $totalParticipant = 0;
 $totalAdultes = 0;
 $totalEnfant = 0;
+$totalMaxParcours=0;
 foreach ($Lesparcours as $key => $UnParcours) {
     echo '<th>'.$key.'kms</th>';
     //-- Calculs des sommes de chaques lignes.
@@ -23,6 +24,7 @@ foreach ($Lesparcours as $key => $UnParcours) {
     //--
     $totalEnfant += $UnParcours[1];
     //--
+    $totalMaxParcours += $UnParcours[2];
 }
 echo '<th> TOTAL </th>';
 //---------------------------------------
@@ -65,8 +67,13 @@ foreach ($Lesparcours as $UnParcours) {
         echo '<td>'.$UnParcours[2].'</td>';
     }
 }
-
-echo '</tr><tr><td></td><td></td><td></td><td></td><td></td>';
+if ($totalMaxParcours == 0) {
+    echo '<td>Non définie</td>';
+}
+else
+{
+    echo '<td>'.$totalMaxParcours.'</td>';
+}
 ?>
 </table>
 <h3 align='center' class='TextBlanc'><b>REPAS</b></h3><br>
@@ -74,3 +81,6 @@ echo '</tr><tr><td></td><td></td><td></td><td></td><td></td>';
 <th> </th><th>Nombres de repas</th><th>Nombre d'inscription</th>
 <tr><td>Adultes</td><td><?php echo $NombreRepasAdultes?></td><td><?php echo $totalAdultes?></td></tr>
 <tr><td>Enfants</td><td><?php echo $NombreRepasEnfants?></td><td><?php echo $totalEnfant?></td></tr>
+</table>
+<br><br>
+<h4 class='TextBlanc'><b>TOTAL encaissé : <?php echo $TotalEncaisse ?> €</b></h4><br>
