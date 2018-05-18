@@ -234,12 +234,21 @@ class ModeleUtilisateur extends CI_Model {
   {
     $this->db->select('*');
     $this->db->where('DATEVALIDATION <>', NULL);
+    $this->db->where('sinscrire.ANNEE', date('Y'));
     $this->db->join('membrede', 'membrede.NOEQUIPE = sinscrire.NOEQUIPE');
     $this->db->join('equipe', 'sinscrire.NOEQUIPE = equipe.NOEQUIPE');
     $this->db->join('participant', 'participant.NOPARTICIPANT = membrede.NOPARTICIPANT');
+    $this->db->join('choisir', 'choisir.NOEQUIPE = equipe.NOEQUIPE');
+    $this->db->join('parcours', 'parcours.NOPARCOURS = choisir.NOPARCOURS');
     $this->db->order_by('equipe.NOEQUIPE', 'ASC');
     $requete = $this->db->get('sinscrire');
     return $requete->result_array();
+  }
+  public function GetNombreParticipantParEquipe($Value)
+  {
+    $this->db->from('membrede');
+    $this->db->where('NOEQUIPE', $Value['NOEQUIPE']);
+    return $this->db->count_all_results();
   }
   public function GetNombreEquipeInscrite($Value)
   {

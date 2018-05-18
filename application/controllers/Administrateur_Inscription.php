@@ -14,16 +14,14 @@ class Administrateur_Inscription extends CI_Controller {
     public function AncienParticipant()
     {
         $this->load->view('Template/EnTete');
-        //$this->load->view('Inscription/DonneeFixe');
+        $this->load->view('Inscription/DonneeFixe');
         $this->load->view('Inscription/AncienParticipant');
         if($this->input->post('submit'))
         {
             $LesRandonneur = $this->ModeleUtilisateur->GetEmailRandonneur();
             $LesResponsable = $this->ModeleUtilisateur->GetEmailResponsable();
-            var_dump($LesRandonneur);
-            var_dump($LesResponsable);
             //---- Envoye des mails a tout les randonneurs
-            /*foreach ($LesRandonneur as $UnParticipant)
+            foreach ($LesRandonneur as $UnParticipant)
             {
                 $this->load->library('email');
                 $this->email->from('thomas.choanier.BTS@gmail.com', 'L\'Equipe RandoTroll');
@@ -49,7 +47,7 @@ class Administrateur_Inscription extends CI_Controller {
                 {
                         $this->email->print_debugger();
                 }
-            }*/
+            }
         }
 
     }
@@ -196,7 +194,7 @@ class Administrateur_Inscription extends CI_Controller {
         $this->load->view('Inscription/DonneeFixe');
         $this->load->library('ciqrcode');
 	
-        $params['data'] = '';
+        $params['data'] = 'toto';
         $params['level'] = 'H';
         $params['size'] = 10;
         $params['savename'] = FCPATH.'test.png';

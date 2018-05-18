@@ -49,6 +49,28 @@ class ReCapitulatif extends CI_Controller {
         $this->load->view('Recapitulatif/TableauDeBord',$tout);
         
     }
+    public function AffectationVague()
+    {
+        $this->load->view('Template/EnTete');
+        $this->load->view('Inscription/DonneeFixe');
+        $Données['LesEquipes'] = $this->ModeleUtilisateur->GetEquipeValide();
+        $this->load->view('Recapitulatif/AffectationVague',$Données);
+        if($this->input->post('submit')) 
+        {
+            $noequipe = 0;
+            foreach ($Données['LesEquipes'] as $UneEquipe) {
+                if ($UneEquipe['NOEQUIPE'] <> $noequipe) 
+                {
+                    $noequipe = $UneEquipe['NOEQUIPE'];
+                    $this->ModeleUtilisateur->UpdateChoisir($choisir = array('ANNEE' =>date('Y'),'NOEQUIPE' => $noequipe,'VAGUE' =>$this->input->post($noequipe)));
+
+                }
+            }
+            
+            redirect('Recapitulatif/AffectationVague');
+            
+        }
+    }
 }
 
 
