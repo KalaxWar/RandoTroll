@@ -189,7 +189,7 @@ class Administrateur_Inscription extends CI_Controller {
         }
     }
     public function QRcode()
-    {
+    { 
         $this->load->view('Template/EnTete');
         $this->load->view('Inscription/DonneeFixe');
         $this->load->library('ciqrcode');

@@ -345,4 +345,42 @@ class ModeleUtilisateur extends CI_Model {
     $requete = $this->db->get('participant');
     return $requete->result_array();
   }
+  public function GetContributeur()
+  {
+    $requete = $this->db->get('contributeur');
+    return $requete->result_array(); 
+  }
+  public function GetWhereContributeur($Value)
+  {
+    $requete = $this->db->get_where('contributeur', $Value);
+    return $requete->row_array(); 
+  }
+  public function AddContributeur($Value)
+  {
+    $this->db->insert('contributeur', $Value);
+    return $this->db->insert_id();
+  }
+  public function AddApporteurDesSponsors($Value)
+  {
+    $this->db->insert('apporteurdesponsors', $Value);
+  }
+  public function AddBenevole($Value)
+  {
+    $this->db->insert('benevole', $Value);
+  }
+  public function UpdateContributeur($Value)
+  {
+    $this->db->where('NOCONTRIBUTEUR', $Value['NOCONTRIBUTEUR']);
+    $this->db->update('contributeur', $Value);
+  }
+  public function GetWhereApporteurDesSponsors($Value)
+  {
+    $requete = $this->db->get_where('apporteurdesponsors', $Value);
+    return $requete->row_array(); 
+  }
+  public function GetWhereBenevole($Value)
+  {
+    $requete = $this->db->get_where('benevole', $Value);
+    return $requete->row_array();
+  }
 }
