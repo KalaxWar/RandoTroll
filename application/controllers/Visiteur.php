@@ -115,6 +115,8 @@ class Visiteur extends CI_Controller {
                     redirect('Administrateur_Inscription');
                 }
                 if ($Utilisateur['PROFIL'] == 'organisation') {
+                    $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
+                    $this->session->AnneeEnCours = $AnneeEnCours;
                     redirect('Administrateur_Organisation');
                 }
                 if ($Utilisateur['PROFIL'] == 'super') {

@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class ReCapitulatif extends CI_Controller {
+class Recapitulatif extends CI_Controller {
 
     public function index()
     {
@@ -45,14 +45,25 @@ class ReCapitulatif extends CI_Controller {
             $tout['NombreRepasEnfants'] = $NombreRepasEnfants;
             $tout['TotalEncaisse'] = $TotalEncaisse;
         $this->load->view('Template/EnTete');
-        $this->load->view('Inscription/DonneeFixe');
-        $this->load->view('Recapitulatif/TableauDeBord',$tout);
         
+        if ($this->session->profil == 'inscription') {
+            $this->load->view('Inscription/DonneeFixe');
+        }
+        if ($this->session->profil == 'organisation') {
+            $this->load->view('Organisation/DonneeFixe');
+        }
+        
+        $this->load->view('Recapitulatif/TableauDeBord',$tout);
     }
     public function AffectationVague()
     {
-        $this->load->view('Template/EnTete');
-        $this->load->view('Inscription/DonneeFixe');
+        $this->load->view('Template/EnTete');        
+        if ($this->session->profil == 'inscription') {
+            $this->load->view('Inscription/DonneeFixe');
+        }
+        if ($this->session->profil == 'organisation') {
+            $this->load->view('Organisation/DonneeFixe');
+        }
         $Données['LesEquipes'] = $this->ModeleUtilisateur->GetEquipeValide();
         $this->load->view('Recapitulatif/AffectationVague',$Données);
         if($this->input->post('submit')) 

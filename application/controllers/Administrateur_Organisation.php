@@ -22,8 +22,8 @@ class Administrateur_Organisation extends CI_Controller {
         if($this->input->post('submit')) 
         {
             $UnContributeur = $this->ModeleUtilisateur->GetWhereContributeur($Utilisateur = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
-            $UnContributeur['bene'] = $this->ModeleUtilisateur->GetWhereApporteurDesSponsors($Utilisateur = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
-            $UnContributeur['sponso'] = $this->ModeleUtilisateur->GetWhereBenevole($Utilisateur = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
+            $UnContributeur['sponso'] = $this->ModeleUtilisateur->GetWhereApporteurDesSponsors($Utilisateur = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
+            $UnContributeur['bene'] = $this->ModeleUtilisateur->GetWhereBenevole($Utilisateur = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
             $this->load->view('Organisation/Gestion_Contributeur',$UnContributeur);
         }
         else
@@ -77,19 +77,19 @@ class Administrateur_Organisation extends CI_Controller {
                 'VILLE' => $ville
             );
             $this->ModeleUtilisateur->UpdateContributeur($LeContributeur);
-            $UnContributeur['bene'] = $this->ModeleUtilisateur->GetWhereApporteurDesSponsors($Utilisateur = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
-            $UnContributeur['sponso'] = $this->ModeleUtilisateur->GetWhereBenevole($Utilisateur = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
+            $UnContributeur['sponso'] = $this->ModeleUtilisateur->GetWhereApporteurDesSponsors($Utilisateur = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
+            $UnContributeur['bene'] = $this->ModeleUtilisateur->GetWhereBenevole($Utilisateur = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
 
-            if (!(isset($UnContributeur['bene']))) 
+            if (!(isset($UnContributeur['sponso']))) 
             {
-                if ($this->input->post('Bene')) 
+                if ($this->input->post('Sponso')) 
                 {
                     $this->ModeleUtilisateur->AddApporteurDesSponsors($arrayName = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
                 }
             }
-            if (!(isset($UnContributeur['sponso']))) 
+            if (!(isset($UnContributeur['bene']))) 
             {
-                if ($this->input->post('Sponso')) 
+                if ($this->input->post('Bene')) 
                 {
                     $this->ModeleUtilisateur->AddBenevole($arrayName = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
                 }
@@ -97,6 +97,40 @@ class Administrateur_Organisation extends CI_Controller {
             redirect('Administrateur_Organisation/Gestion_Contributeur');
             
         }
+    }
+    public function Gestion_Benevoles()
+    {
+        $this->load->view('Template/EnTete');
+        $this->load->view('Organisation/DonneeFixe');
+        $LesBénévoles['LesBénévoles'] = $this->ModeleUtilisateur->GetBenevole();
+        $this->load->view('Organisation/Recherche_Benevoles',$LesBénévoles);
+        $this->load->view('Organisation/Ajout_Commission');
+        $Donnée['LesCommissions'] = $this->ModeleUtilisateur->GetCommission();
+        $Donnée['Participer']=$this->ModeleUtilisateur->GetParticiper();
+        $this->load->view('Organisation/Benevoles_Commis',$Donnée);
+        if($this->input->post('submitRecherche')) 
+        {
+            $Commission['personne'] = $this->ModeleUtilisateur->GetWhereContributeur($Utilisateur = array('NOCONTRIBUTEUR' =>$this->input->post('nocontributeur')));
+            $Commission['LesCommissionsPasInscrit'] = $this->ModeleUtilisateur->GetWhereCommission($this->input->post('nocontributeur'));
+            $Commission['LesCommissionsInscrit'] = $this->ModeleUtilisateur->GetWhereBenevoleCommis($this->input->post('nocontributeur'));
+            $this->load->view('Organisation/Selection_Commission',$Commission);
+        }
+        if($this->input->post('submitAjout'))
+        {
+            $this->ModeleUtilisateur->AddBenevoleCommission($Commission = array('LIBELLE' => $this->input->post('txtCommission')));
+            redirect('Administrateur_Organisation/Gestion_Benevoles');
+        }
+        
+    }
+    public function Ajout_Participer_Commission($commission,$contributeur)
+    {
+        $this->ModeleUtilisateur->AddParticiper($Participer = array('ANNEE' => date('Y'),'NOCOMMISSION'=>$commission,'NOCONTRIBUTEUR'=>$contributeur));
+        redirect('Administrateur_Organisation/Gestion_Benevoles');
+    }
+    public function Supprimer_Participer_Commission($commission,$contributeur)
+    {
+        $this->ModeleUtilisateur->DeleteParticiper($Participer = array('ANNEE' => date('Y'),'NOCOMMISSION'=>$commission,'NOCONTRIBUTEUR'=>$contributeur));
+        redirect('Administrateur_Organisation/Gestion_Benevoles');
     }
 }
 ?>

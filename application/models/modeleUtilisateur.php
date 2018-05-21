@@ -383,4 +383,59 @@ class ModeleUtilisateur extends CI_Model {
     $requete = $this->db->get_where('benevole', $Value);
     return $requete->row_array();
   }
+  public function GetBenevole()
+  {
+    $this->db->select('*');
+    $this->db->join('benevole', 'benevole.NOCONTRIBUTEUR = contributeur.NOCONTRIBUTEUR');
+    $requete = $this->db->get('contributeur');
+    return $requete->result_array();
+  }
+  public function AddBenevoleCommission($Value)
+  {
+    $this->db->insert('commission', $Value);
+  }
+  public function GetCommission()
+  {
+    $requete = $this->db->get('commission');
+    return $requete->result_array();
+  }
+  public function GetParticiper()
+  {
+    $this->db->select('*');
+    $this->db->where('ANNEE', date('Y'));
+    $this->db->join('benevole', 'benevole.NOCONTRIBUTEUR = contributeur.NOCONTRIBUTEUR');
+    $this->db->join('participer', 'participer.NOCONTRIBUTEUR = benevole.NOCONTRIBUTEUR');
+    $requete = $this->db->get('contributeur');
+    return $requete->result_array();
+  }
+  public function AddParticiper($Value)
+  {
+    $this->db->insert('participer', $Value);
+    
+  }
+  public function GetWhereCommission($Value) // A REVOIR
+  {// A REVOIR
+    $requete = "SELECT * 
+    from commission
+    where nocommission not in (
+      SELECT commission.nocommission 
+      FROM commission,participer 
+      where commission.nocommission = participer.nocommission
+      and nocontributeur = $Value
+    )";
+    $requete = $this->db->query($requete); // A REVOIR
+    return $requete->result_array(); // A REVOIR
+  }// A REVOIR
+  public function GetWhereBenevoleCommis($Value)
+  {
+    $this->db->where('NOCONTRIBUTEUR', $Value);
+    $this->db->join('participer', 'participer.NOCOMMISSION = commission.NOCOMMISSION');
+    $requete = $this->db->get('commission');
+    return $requete->result_array();
+  }
+  public function DeleteParticiper($Value)
+  {
+    
+    $this->db->delete('participer',$Value);
+  }
 }
