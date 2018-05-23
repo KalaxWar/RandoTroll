@@ -11,10 +11,10 @@
     </div>
     <ul class="nav navbar-nav">
       <li><a <?php echo "href='".site_url('Administrateur_Organisation/Gestion_Contributeur')."'" ?>>Gestion des contributeur</a></li>
-      <li><a <?php echo "href='".site_url('Administrateur_Organisation/Gestion_Benevoles')."'" ?>>Gestion des sponsor</a></li>
+      <li><a <?php echo "href='".site_url('Administrateur_Organisation/Gestion_Sponsor')."'" ?>>Gestion des sponsor</a></li>
       <li><a <?php echo "href='".site_url('Administrateur_Organisation/Gestion_Benevoles')."'" ?>>Gestion des bénévoles</a></li>
-      <li><a <?php echo "href='".site_url('Administrateur_Organisation/AncienParticipant')."'" ?>>mailing remerciement sponsor</a></li>
-      <li><a <?php echo "href='".site_url('Administrateur_Organisation/AncienParticipant')."'" ?>>mailing relance sponsor</a></li>
+      <li><a <?php echo "href='".site_url('Administrateur_Organisation/Mailing_Remerciements')."'" ?>>mailing remerciement sponsor</a></li>
+      <li><a <?php echo "href='".site_url('Administrateur_Organisation/Mailing_Tout_Les_Sponsors')."'" ?>>mailing relance sponsor</a></li>
       <li><a <?php echo "href='".site_url('Recapitulatif/TableauDeBord')."'" ?>>Tableau de bord</a></li>
       <li><a <?php echo "href='".site_url('Recapitulatif/AffectationVague')."'" ?>>Affecter les équipes à des vagues de départ</a></li>
     </ul>

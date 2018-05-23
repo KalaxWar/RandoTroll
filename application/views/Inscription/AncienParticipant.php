@@ -13,5 +13,6 @@ $data = array(
    );
 echo form_textarea($data);
 ?>
+<br>
 <input type='submit' name='submit' class='btn btn-primary' value ="Envoyer à tout les anciens participant">
 </table>

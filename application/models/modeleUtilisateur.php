@@ -390,6 +390,13 @@ class ModeleUtilisateur extends CI_Model {
     $requete = $this->db->get('contributeur');
     return $requete->result_array();
   }
+  public function GetApporteurDesSponsors()
+  {
+    $this->db->select('*');
+    $this->db->join('apporteurdesponsors', 'apporteurdesponsors.NOCONTRIBUTEUR = contributeur.NOCONTRIBUTEUR');
+    $requete = $this->db->get('contributeur');
+    return $requete->result_array();
+  }
   public function AddBenevoleCommission($Value)
   {
     $this->db->insert('commission', $Value);
@@ -435,7 +442,66 @@ class ModeleUtilisateur extends CI_Model {
   }
   public function DeleteParticiper($Value)
   {
-    
     $this->db->delete('participer',$Value);
+  }
+  public function GetSponsorAnneeEnCours()
+  {
+    $this->db->join('contribuer', 'contribuer.NOSPONSOR = sponsor.NOSPONSOR');
+    $this->db->where('ANNEE', date('Y'));
+    $requete = $this->db->get('sponsor');
+    return $requete->result_array();
+  }
+  public function GetSponsor()
+  {
+    $requete = $this->db->get('sponsor');
+    return $requete->result_array();
+  }
+  public function AddSponsor($Value)
+  {
+    $this->db->insert('sponsor', $Value);
+    return $this->db->insert_id();
+  }
+  public function AddApporter($Value)
+  {
+    $this->db->insert('apporter', $Value);
+  }
+  public function GetWhereSponsor($Value)
+  {
+    $this->db->where('NOSPONSOR', $Value);
+    $requete = $this->db->get('sponsor');
+    return $requete->row_array();
+  }
+  public function UpdateSponsor($Value)
+  {
+    $this->db->where('NOSPONSOR', $Value['NOSPONSOR']);
+    $this->db->update('sponsor', $Value);
+  }
+  public function GetWhereApporter($Value)
+  {
+    $this->db->where('NOSPONSOR', $Value);
+    $requete = $this->db->get('apporter');
+    return $requete->row_array();
+  }
+  public function UpdateApporter($Value)
+  {
+    $this->db->where('NOSPONSOR', $Value['NOSPONSOR']);
+    $this->db->update('apporter', $Value);
+  }
+  public function GetWhereContribuer($Value)
+  {
+    $this->db->where('NOSPONSOR', $Value);
+    $this->db->where('ANNEE', date('Y'));
+    $requete = $this->db->get('contribuer');
+    return $requete->row_array();
+  }
+  public function AddContribuer($Value)
+  {
+    $this->db->insert('contribuer', $Value);
+  }
+  public function UpdateContribuer($Value)
+  {
+    $this->db->where('NOSPONSOR', $Value['NOSPONSOR']);
+    $this->db->where('ANNEE', date('Y'));
+    $this->db->update('contribuer', $Value);
   }
 }

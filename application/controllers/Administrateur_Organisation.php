@@ -122,6 +122,96 @@ class Administrateur_Organisation extends CI_Controller {
         }
         
     }
+    public function Gestion_Sponsor()
+    {
+        $this->load->view('Template/EnTete');
+        $this->load->view('Organisation/DonneeFixe');
+        $LesSponsors['LesSponsors'] = $this->ModeleUtilisateur->GetSponsor();
+        $LesSponsors['LesContributeurs'] = $this->ModeleUtilisateur->GetApporteurDesSponsors();
+        $this->load->view('Organisation/Recherche_Sponsor',$LesSponsors);
+        if($this->input->post('submitRecherche')) 
+        {
+            $LesSponsors['LeSponso'] = $this->ModeleUtilisateur->GetWhereSponsor($this->input->post('nosponsor'));
+            $LesSponsors['LeContributeur'] = $this->ModeleUtilisateur->GetWhereApporter($this->input->post('nosponsor'));
+            $LesSponsors['Contribution'] = $this->ModeleUtilisateur->GetWhereContribuer($this->input->post('nosponsor'));
+            $this->load->view('Organisation/Contribution_Sponsor',$LesSponsors);
+            $this->load->view('Organisation/Ajout_Sponsor',$LesSponsors);
+            
+        }
+        else
+        {
+            $this->load->view('Organisation/Ajout_Sponsor',$LesSponsors);
+        }
+
+        if($this->input->post('SubmitContribution'))
+        {
+            $Montant = $this->ModeleUtilisateur->GetWhereContribuer($this->input->post('nosponsor'));
+            var_dump($Montant);
+            if (!(empty($Montant))) {
+                $this->ModeleUtilisateur->UpdateContribuer($arrayName = array('NOSPONSOR' =>$this->input->post('nosponsor'),'ANNEE' => date('Y'),'MONTANT'=>$this->input->post('txtMontant')));
+            }
+            else {
+                $this->ModeleUtilisateur->AddContribuer($arrayName = array('NOSPONSOR' =>$this->input->post('nosponsor'),'ANNEE' => date('Y'),'MONTANT'=>$this->input->post('txtMontant')));
+            }
+        }
+        if($this->input->post('submitForm'))
+        {
+            if ($this->input->post('txtMail') == '') { $mail = null;} else {$mail = $this->input->post('txtMail');}
+            if ($this->input->post('txtTelPortable') == '') { $telport = null;} else {$telport = $this->input->post('txtTelPortable');}
+            if ($this->input->post('txtTelFixe') == '') { $telfixe = null;} else {$telfixe = $this->input->post('txtTelFixe');}
+            if ($this->input->post('txtAdresse') == '') { $adresse = null;} else {$adresse = $this->input->post('txtAdresse');}
+            if ($this->input->post('txtCP') == '') { $cp = null;} else {$cp = $this->input->post('txtCP');}
+            if ($this->input->post('txtVille') == '') { $ville = null;} else {$ville = $this->input->post('txtVille');}
+            $Sponsor = array
+            (
+                'NOM' => $this->input->post('txtNom'),
+                'MAILCONTACT' => $mail,
+                'TELPORTABLECONTACT' => $telport,
+                'TELFIXE' => $telfixe,
+                'ADRESSE' => $adresse,
+                'CODEPOSTAL' => $cp,
+                'VILLE' => $ville
+            );
+            $idSponsor = $this->ModeleUtilisateur->AddSponsor($Sponsor);
+            if ($this->input->post('nocontributeur')) {
+                $this->ModeleUtilisateur->AddApporter($arrayName = array('NOCONTRIBUTEUR' => $this->input->post('nocontributeur'),'NOSPONSOR'=>$idSponsor));
+            }
+            redirect('Administrateur_Organisation/Gestion_Sponsor');
+        }
+        if($this->input->post('submitModif'))
+        {
+            if ($this->input->post('txtMail') == '') { $mail = null;} else {$mail = $this->input->post('txtMail');}
+            if ($this->input->post('txtTelPortable') == '') { $telport = null;} else {$telport = $this->input->post('txtTelPortable');}
+            if ($this->input->post('txtTelFixe') == '') { $telfixe = null;} else {$telfixe = $this->input->post('txtTelFixe');}
+            if ($this->input->post('txtAdresse') == '') { $adresse = null;} else {$adresse = $this->input->post('txtAdresse');}
+            if ($this->input->post('txtCP') == '') { $cp = null;} else {$cp = $this->input->post('txtCP');}
+            if ($this->input->post('txtVille') == '') { $ville = null;} else {$ville = $this->input->post('txtVille');}
+            $Sponsor = array
+            (
+                'NOSPONSOR' => $this->input->post('nosponsor'),
+                'NOM' => $this->input->post('txtNom'),
+                'MAILCONTACT' => $mail,
+                'TELPORTABLECONTACT' => $telport,
+                'TELFIXE' => $telfixe,
+                'ADRESSE' => $adresse,
+                'CODEPOSTAL' => $cp,
+                'VILLE' => $ville
+            );
+            $this->ModeleUtilisateur->UpdateSponsor($Sponsor);
+            $Apporter = $this->ModeleUtilisateur->GetWhereApporter($this->input->post('nosponsor'));
+            var_dump($Apporter);
+            if ($this->input->post('nocontributeur')) {
+                if (!(empty($Apporter))) {
+                    $this->ModeleUtilisateur->UpdateApporter($arrayName = array('NOCONTRIBUTEUR' => $this->input->post('nocontributeur'),'NOSPONSOR'=>$this->input->post('nosponsor')));
+                }
+                else
+                {
+                    $this->ModeleUtilisateur->AddApporter($arrayName = array('NOCONTRIBUTEUR' => $this->input->post('nocontributeur'),'NOSPONSOR'=>$this->input->post('nosponsor')));
+                }
+            }
+            redirect('Administrateur_Organisation/Gestion_Sponsor');
+        }
+    }
     public function Ajout_Participer_Commission($commission,$contributeur)
     {
         $this->ModeleUtilisateur->AddParticiper($Participer = array('ANNEE' => date('Y'),'NOCOMMISSION'=>$commission,'NOCONTRIBUTEUR'=>$contributeur));
@@ -131,6 +221,60 @@ class Administrateur_Organisation extends CI_Controller {
     {
         $this->ModeleUtilisateur->DeleteParticiper($Participer = array('ANNEE' => date('Y'),'NOCOMMISSION'=>$commission,'NOCONTRIBUTEUR'=>$contributeur));
         redirect('Administrateur_Organisation/Gestion_Benevoles');
+    }
+    public function Mailing_Remerciements()
+    {
+        $this->load->view('Template/EnTete');
+        $this->load->view('Organisation/DonneeFixe');
+        $this->load->view('Organisation/Mailing_Remerciements');
+        if($this->input->post('submit'))
+        {
+            $LesSponsors = $this->ModeleUtilisateur->GetSponsorAnneeEnCours();
+            //---- Envoye des mails a tout les randonneurs
+            foreach ($LesSponsors as $UnSponsor)
+            {
+                if ($UnSponsor['MAILCONTACT']) 
+                {
+                    $this->load->library('email');
+                    $this->email->from('thomas.choanier.BTS@gmail.com', 'L\'Equipe RandoTroll');
+                    $this->email->to($UnSponsor['MAILCONTACT']);
+                    $this->email->subject($this->input->post('txtObject'));
+                    $message = $this->input->post('email');
+                    $this->email->message($message);
+                    if (!$this->email->send())
+                    {
+                            $this->email->print_debugger();
+                    }
+                }
+            }
+        }
+    }
+    public function Mailing_Tout_Les_Sponsors()
+    {
+        $this->load->view('Template/EnTete');
+        $this->load->view('Organisation/DonneeFixe');
+        $this->load->view('Organisation/Mailing_Tout_Les_Sponsors');
+        if($this->input->post('submit'))
+        {
+            $LesSponsors = $this->ModeleUtilisateur->GetSponsors();
+            //---- Envoye des mails a tout les randonneurs
+            foreach ($LesSponsors as $UnSponsor)
+            {
+                if ($UnSponsor['MAILCONTACT']) 
+                {
+                    $this->load->library('email');
+                    $this->email->from('thomas.choanier.BTS@gmail.com', 'L\'Equipe RandoTroll');
+                    $this->email->to($UnSponsor['MAILCONTACT']);
+                    $this->email->subject($this->input->post('txtObject'));
+                    $message = $this->input->post('email');
+                    $this->email->message($message);
+                    if (!$this->email->send())
+                    {
+                            $this->email->print_debugger();
+                    }
+                }
+            }
+        }
     }
 }
 ?>
