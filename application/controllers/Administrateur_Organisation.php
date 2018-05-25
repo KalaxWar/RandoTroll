@@ -49,10 +49,10 @@ class Administrateur_Organisation extends CI_Controller {
                 'VILLE' => $ville
             );
             $NoContributeur = $this->ModeleUtilisateur->AddContributeur($UnContributeur);
-            if ($this->input->post('Bene')) {
+            if ($this->input->post('Sponso')) {
                  $this->ModeleUtilisateur->AddApporteurDesSponsors($arrayName = array('NOCONTRIBUTEUR' =>$NoContributeur));
             }
-            if ($this->input->post('Sponso')) {
+            if ($this->input->post('Bene')) {
                 $this->ModeleUtilisateur->AddBenevole($arrayName = array('NOCONTRIBUTEUR' =>$NoContributeur));
             }
             redirect('Administrateur_Organisation/Gestion_Contributeur');
@@ -129,14 +129,13 @@ class Administrateur_Organisation extends CI_Controller {
         $LesSponsors['LesSponsors'] = $this->ModeleUtilisateur->GetSponsor();
         $LesSponsors['LesContributeurs'] = $this->ModeleUtilisateur->GetApporteurDesSponsors();
         $this->load->view('Organisation/Recherche_Sponsor',$LesSponsors);
-        if($this->input->post('submitRecherche')) 
+        if($this->input->post('submitRecherche'))
         {
             $LesSponsors['LeSponso'] = $this->ModeleUtilisateur->GetWhereSponsor($this->input->post('nosponsor'));
             $LesSponsors['LeContributeur'] = $this->ModeleUtilisateur->GetWhereApporter($this->input->post('nosponsor'));
             $LesSponsors['Contribution'] = $this->ModeleUtilisateur->GetWhereContribuer($this->input->post('nosponsor'));
             $this->load->view('Organisation/Contribution_Sponsor',$LesSponsors);
             $this->load->view('Organisation/Ajout_Sponsor',$LesSponsors);
-            
         }
         else
         {
@@ -146,7 +145,6 @@ class Administrateur_Organisation extends CI_Controller {
         if($this->input->post('SubmitContribution'))
         {
             $Montant = $this->ModeleUtilisateur->GetWhereContribuer($this->input->post('nosponsor'));
-            var_dump($Montant);
             if (!(empty($Montant))) {
                 $this->ModeleUtilisateur->UpdateContribuer($arrayName = array('NOSPONSOR' =>$this->input->post('nosponsor'),'ANNEE' => date('Y'),'MONTANT'=>$this->input->post('txtMontant')));
             }
@@ -199,7 +197,6 @@ class Administrateur_Organisation extends CI_Controller {
             );
             $this->ModeleUtilisateur->UpdateSponsor($Sponsor);
             $Apporter = $this->ModeleUtilisateur->GetWhereApporter($this->input->post('nosponsor'));
-            var_dump($Apporter);
             if ($this->input->post('nocontributeur')) {
                 if (!(empty($Apporter))) {
                     $this->ModeleUtilisateur->UpdateApporter($arrayName = array('NOCONTRIBUTEUR' => $this->input->post('nocontributeur'),'NOSPONSOR'=>$this->input->post('nosponsor')));

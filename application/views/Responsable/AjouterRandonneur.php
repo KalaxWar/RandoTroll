@@ -58,7 +58,7 @@ else
     </div>
     <div class="form-group">
         <label for="txtTel"><span class='textBlanc'>Numéro de téléphone : </span></label>
-        <input type="text" name='txtTel' class='form-control' size='11' <?php if (isset($TELPORTABLE)) {echo 'value = '.$TELPORTABLE;}?>>
+        <input type="text" name='txtTel' class='form-control' size='7' <?php if (isset($TELPORTABLE)) {echo 'value = '.$TELPORTABLE;}?>>
     </div>  
    <br><br>
     <div class="checkbox">

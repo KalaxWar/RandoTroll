@@ -189,10 +189,15 @@ class ModeleUtilisateur extends CI_Model {
   public function GetAdministrateur($Value)
   {
     $this->db->select('*');
-    $this->db->where('EMAIL', $Value['email']);
+    if (isset($Value['email'])) {
+      $this->db->where('EMAIL', $Value['email']);
+      $this->db->where('MOTDEPASSE', $Value['mdp']);
+    }    
+    if (isset($Value['nocontributeur'])) {
+      $this->db->where('benevole.NOCONTRIBUTEUR', $Value['nocontributeur']);
+    }
     $this->db->join('benevole', 'benevole.NOCONTRIBUTEUR = contributeur.NOCONTRIBUTEUR');
     $this->db->join('administrateur', 'benevole.NOCONTRIBUTEUR = administrateur.NOCONTRIBUTEUR');
-    $this->db->where('MOTDEPASSE', $Value['mdp']);
     $requete = $this->db->get('contributeur');
     return $requete->row_array();
   }
@@ -503,5 +508,28 @@ class ModeleUtilisateur extends CI_Model {
     $this->db->where('NOSPONSOR', $Value['NOSPONSOR']);
     $this->db->where('ANNEE', date('Y'));
     $this->db->update('contribuer', $Value);
+  }
+  public function AddAnnee($Value)
+  {
+    $this->db->insert('annee', $Value);
+  }
+  public function UpdateAnnee($Value)
+  {
+    $this->db->where('ANNEE', $Value['ANNEE']);
+    $this->db->update('annee', $Value);
+  }
+  public function addAdministrateur($Value)
+  {
+    $this->db->insert('administrateur', $Value);
+  }
+  public function UpdateAdministrateur($Value)
+  {
+    $this->db->where('NOCONTRIBUTEUR', $Value['NOCONTRIBUTEUR']);
+    $this->db->update('administrateur', $Value);
+  }
+  public function DeleteAdministrateur($Value)
+  {
+    $this->db->where('NOCONTRIBUTEUR', $Value);
+    $this->db->delete('administrateur');
   }
 }

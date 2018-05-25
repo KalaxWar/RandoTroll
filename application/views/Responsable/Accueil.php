@@ -16,6 +16,7 @@
             <p align='center'><span class='glyphicon glyphicon-exclamation-sign'></span> <?php echo $this->session->AnneeEnCours['MAXPAREQUIPE']; ?> personne pourrons composer votre équipe. Vous pouvez dépasser le nombre mais si il y a trop de personne l'administrateur risque de ne pas valider l'inscription</p> <br>
 
               <input type="hidden" name="num" value="1">
+              <div class='table-responsive'>
               <table class="table table-Info table-hover">
                   <th>Nom et prénom</th><th>Age</th><th>Repas</th><th>Email</th><th>Téléphone</th><th><?php echo "<a href='".site_url('Responsable')."'><button type='submit' name='ah' class='btn btn-primary'>Ajouter un randonneur</button></a>";?><th>
                     <?php 
@@ -107,6 +108,7 @@
                           }
                         } ?>
               </table>
+              </div>
               <h4 align='center'>Votre équipe est composée de :</h4> 
               <ul>
               <?php $prixAdultesInscri = $this->session->AnneeEnCours['TARIFINSCRIPTIONADULTE'] * $NBAdultesInscri //on affiche les sous qu'ils devront?>
