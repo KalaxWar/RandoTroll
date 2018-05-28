@@ -335,18 +335,28 @@ class ModeleUtilisateur extends CI_Model {
     $this->db->join('sinscrire', 'sinscrire.NOEQUIPE = equipe.NOEQUIPE');
     return $this->db->count_all_results();
   }
-  public function GetEmailRandonneur()
+  public function GetEmailRandonneur($Value = null)
   {
     $this->db->select('distinct (MAIL)');
     $this->db->join('randonneur', 'randonneur.NOPARTICIPANT = participant.NOPARTICIPANT');
     $this->db->where('MAIL <>', 'NULL');
+    if ($Value <> null) 
+    {
+      $this->db->join('membrede', 'membrede.NOPARTICIPANT = participant.NOPARTICIPANT');
+      $this->db->where('ANNEE', date('Y'));
+    }
     $requete = $this->db->get('participant');
     return $requete->result_array();
   }
-  public function GetEmailResponsable()
+  public function GetEmailResponsable($value = null)
   {
     $this->db->select('distinct (MAIL)');
     $this->db->join('responsable', 'responsable.NOPARTICIPANT = participant.NOPARTICIPANT');
+    if ($Value <> null) 
+    {
+      $this->db->join('membrede', 'membrede.NOPARTICIPANT = participant.NOPARTICIPANT');
+      $this->db->where('ANNEE', date('Y'));
+    }
     $requete = $this->db->get('participant');
     return $requete->result_array();
   }
@@ -453,6 +463,7 @@ class ModeleUtilisateur extends CI_Model {
   {
     $this->db->join('contribuer', 'contribuer.NOSPONSOR = sponsor.NOSPONSOR');
     $this->db->where('ANNEE', date('Y'));
+    $this->db->order_by('MAILCONTACT', 'ASC');
     $requete = $this->db->get('sponsor');
     return $requete->result_array();
   }
@@ -531,5 +542,15 @@ class ModeleUtilisateur extends CI_Model {
   {
     $this->db->where('NOCONTRIBUTEUR', $Value);
     $this->db->delete('administrateur');
+  }
+  public function GetEmailSponsor($Value)
+  {
+    $this->db->select('DISTINCT (MAILCONTACT)');
+    if ($Value == 1) {
+      $this->db->join('contribuer', 'contribuer.NOSPONSOR = sponsor.NOSPONSOR');
+      $this->db->where('ANNEE', date('Y'));
+    }
+    $requete = $this->db->get('sponsor');
+    return $requete->result_array();
   }
 }

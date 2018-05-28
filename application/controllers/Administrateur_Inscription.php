@@ -5,6 +5,10 @@ class Administrateur_Inscription extends CI_Controller {
 	public function __construct()
    {
     parent::__construct();
+    if (!($this->session->profil == 'super' || $this->session->profil == 'inscription')) // 0 : statut visiteur
+    {
+      redirect('Visiteur'); // pas les droits : redirection vers connexion
+    }
     }
 	public function index()
 	{

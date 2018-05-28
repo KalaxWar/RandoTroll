@@ -109,6 +109,7 @@ class Visiteur extends CI_Controller {
                 $this->session->prenom = $Utilisateur['PRENOM'];
                 $this->session->mail = $Utilisateur['EMAIL'];
                 $this->session->numero = $Utilisateur['NOCONTRIBUTEUR'];
+                
                 if ($Utilisateur['PROFIL'] == 'inscription') {
                     $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
                     $this->session->AnneeEnCours = $AnneeEnCours;
@@ -120,6 +121,8 @@ class Visiteur extends CI_Controller {
                     redirect('Administrateur_Organisation');
                 }
                 if ($Utilisateur['PROFIL'] == 'super') {
+                    $AnneeEnCours = $this->ModeleUtilisateur->GetAnnee($Utilisateur = array( 'annee'=> date('Y')));
+                    $this->session->AnneeEnCours = $AnneeEnCours;
                     redirect('Super_Administrateur');
                 }
             }

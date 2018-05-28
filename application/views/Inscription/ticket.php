@@ -8,7 +8,7 @@ $j = 0;
 $numéroTicket = 0;
 
 foreach ($LesEquipes as $UneEquipe) {
-	if ($UneEquipe['NOEQUIPE'] !=$NOEQUIPE) {
+	if ($UneEquipe['NOEQUIPE'] !=$NOEQUIPE || $i == 12) {
 		$NOEQUIPE == $UneEquipe['NOEQUIPE'];
 		$i = 0;
 		$x = 30;
@@ -40,7 +40,7 @@ foreach ($LesEquipes as $UneEquipe) {
 		$pdf->Cell(3);
 		$x += 100;
 		if ($i == ($j+4)) {
-			$j ==$i;
+			$j = $i;
 			$y += 78;
 			$x = 30;
 			$pdf->Ln(80);

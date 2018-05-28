@@ -5,7 +5,13 @@ class Super_Administrateur extends CI_Controller {
 	public function __construct()
    {
     parent::__construct();
+    {
+        if (!($this->session->profil == 'super')) // 0 : statut visiteur
+      {
+        redirect('Visiteur'); // pas les droits : redirection vers connexion
+      }
     }
+   }
 	public function index()
 	{
         $this->load->view('Template/EnTete');
@@ -114,6 +120,84 @@ class Super_Administrateur extends CI_Controller {
     {
         $this->ModeleUtilisateur->DeleteAdministrateur($Value);
         redirect('Super_Administrateur/Gestion_Droit');
+    }
+    public function Mailing()
+    {
+        $this->load->view('Template/EnTete');
+        $this->load->view('super/DonneeFixe');
+        $this->load->view('super/Mailing');
+        if ($this->input->post('submit')) 
+        {
+            if ($this->input->post('sponsor')) 
+            {
+                if($this->input->post('qui')==1)
+                {
+                    $LesSponsors['LesSponsors'] = $this->ModeleUtilisateur->GetEmailSponsor(1);
+                    //var_dump($LesSponsors);
+                }
+                else 
+                {
+                    $LesSponsors['LesSponsors'] = $this->ModeleUtilisateur->GetEmailSponsor(2);
+                    //var_dump($LesSponsors);
+                }
+                foreach ($LesSponsors['LesSponsors'] as $UnSponsor) 
+                {
+                    $this->load->library('email');
+                $this->email->from('thomas.choanier.BTS@gmail.com', 'L\'Equipe RandoTroll');
+                $this->email->to($UnSponsor['MAILCONTACT']);
+                $this->email->subject($this->input->post('txtObject'));
+                $message = $this->input->post('email');
+                $this->email->message($message);
+                if (!$this->email->send()) // envoie au sponsor séléctionné
+                {
+                        $this->email->print_debugger();
+                } 
+                }
+            }
+            if ($this->input->post('participant')) 
+            {
+                if($this->input->post('qui')==1)
+                {
+                    $LesSponsors['LesRandonneur'] = $this->ModeleUtilisateur->GetEmailRandonneur();
+                    $LesSponsors['LesResponsable'] = $this->ModeleUtilisateur->GetEmailResponsable();
+                    var_dump($LesSponsors);
+                }
+                else 
+                {
+                    $LesSponsors['LesRandonneur'] = $this->ModeleUtilisateur->GetEmailRandonneur(1);
+                    $LesSponsors['LesResponsable'] = $this->ModeleUtilisateur->GetEmailResponsable(1);
+                    var_dump($LesSponsors);
+                }
+                foreach ($LesSponsors['LesRandonneur'] as $UnRandonneur) 
+                {
+                    $this->load->library('email');
+                $this->email->from('thomas.choanier.BTS@gmail.com', 'L\'Equipe RandoTroll');
+                $this->email->to($UnRandonneur['MAIL']);
+                $this->email->subject($this->input->post('txtObject'));
+                $message = $this->input->post('email');
+                $this->email->message($message);
+                if (!$this->email->send()) // envoie au randonneur séléctionné
+                {
+                        $this->email->print_debugger();
+                } 
+                }
+                //----------------
+                foreach ($LesSponsors['LesResponsable'] as $UnResponsable) 
+                {
+                    $this->load->library('email');
+                $this->email->from('thomas.choanier.BTS@gmail.com', 'L\'Equipe RandoTroll');
+                $this->email->to($UnResponsable['MAIL']);
+                $this->email->subject($this->input->post('txtObject'));
+                $message = $this->input->post('email');
+                $this->email->message($message);
+                if (!$this->email->send()) // envoie au responsable séléctionné
+                {
+                        $this->email->print_debugger();
+                } 
+                }
+            }
+            
+        }
     }
 }
 ?>

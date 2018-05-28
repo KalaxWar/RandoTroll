@@ -7,7 +7,21 @@
   <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" <?php echo "href='".site_url('Administrateur_Organisation')."'" ?>>Espace Administrateur</a>
+    <?php 
+      if ($this->session->profil == 'super') 
+      {
+        echo '<li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Changer d\'administrateur
+        <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="'.site_url('Super_Administrateur').'">Super Administrateur</a></li>
+          <li><a href="'.site_url('Administrateur_Organisation').'">Administrateur Organisation</a></li>
+          <li><a href="'.site_url('Administrateur_Inscription').'">Administrateur Inscription</a></li>
+        </ul>
+      </li>';
+      }
+      ?>
+      <a class="navbar-brand" <?php echo "href='".site_url('Administrateur_Organisation')."'" ?>>Administrateur Orga</a>
     </div>
     <ul class="nav navbar-nav">
       <li><a <?php echo "href='".site_url('Administrateur_Organisation/Gestion_Contributeur')."'" ?>>Gestion des contributeur</a></li>
